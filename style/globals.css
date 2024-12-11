@@ -3,9 +3,19 @@
 @tailwind utilities;
 
 :root {
-  font-size: 16px;
-  color: #222222;
   box-sizing: border-box;
+
+  /* color theme */
+  --background-color: rgb(246, 245, 249);
+  --highlight-color: rgb(146, 127, 189);
+  --lightened-color: rgb(201, 192, 223);
+  --light-color: rgb(249, 249, 249);
+  --h1-color: #d24b4b;
+  --h2-color: #e4a30c;
+  --h3-color: #5eb34d;
+  --h4-color: #18a8dc;
+  --h5-color: #8078ba;
+  --p-color: #222222;
 }
 
 @media (prefers-color-scheme: light) {
@@ -14,28 +24,115 @@
 }
 
 h1 {
-  font-size: 25.6px;
-  color: #d24b4b;
-  font-weight: 750;
+  @apply text-h1 font-[750] text-[25.6px];
 }
-
 h2 {
-  font-size: 24px;
-  color: #e4a30c;
-  font-weight: 700;
+  @apply text-h2 font-[700] text-[24px];
 }
 h3 {
-  font-size: 22.4px;
-  color: #5eb34d;
-  font-weight: 650;
+  @apply text-h3 font-[650] text-[22.4px];
 }
 h4 {
-  font-size: 20.8px;
-  color: #18a8dc;
-  font-weight: 600;
+  @apply text-h4 font-[600] text-[20.8px];
 }
 h5 {
-  font-size: 19.2px;
-  color: #8078ba;
-  font-weight: 550;
+  @apply text-h5 font-[550] text-[19.2px];
+}
+p {
+  @apply text-p font-[500] text-[16px];
+}
+
+/*
+
+Atom One Light by Daniel Gamage
+Original One Light Syntax theme from https://github.com/atom/one-light-syntax
+
+base:    #fafafa
+mono-1:  #383a42
+mono-2:  #686b77
+mono-3:  #a0a1a7
+hue-1:   #0184bb
+hue-2:   #4078f2
+hue-3:   #a626a4
+hue-4:   #50a14f
+hue-5:   #e45649
+hue-5-2: #c91243
+hue-6:   #986801
+hue-6-2: #c18401
+
+*/
+
+.hljs {
+  color: #383a42;
+  background: #fafafa;
+}
+
+.hljs-comment,
+.hljs-quote {
+  color: #a0a1a7;
+  font-style: italic;
+}
+
+.hljs-doctag,
+.hljs-keyword,
+.hljs-formula {
+  color: #a626a4;
+}
+
+.hljs-section,
+.hljs-name,
+.hljs-selector-tag,
+.hljs-deletion,
+.hljs-subst {
+  color: #e45649;
+}
+
+.hljs-literal {
+  color: #0184bb;
+}
+
+.hljs-string,
+.hljs-regexp,
+.hljs-addition,
+.hljs-attribute,
+.hljs-meta .hljs-string {
+  color: #50a14f;
+}
+
+.hljs-attr,
+.hljs-variable,
+.hljs-template-variable,
+.hljs-type,
+.hljs-selector-class,
+.hljs-selector-attr,
+.hljs-selector-pseudo,
+.hljs-number {
+  color: #986801;
+}
+
+.hljs-symbol,
+.hljs-bullet,
+.hljs-link,
+.hljs-meta,
+.hljs-selector-id,
+.hljs-title {
+  color: #4078f2;
+}
+
+.hljs-built_in,
+.hljs-title.class_,
+.hljs-class .hljs-title {
+  color: #c18401;
+}
+
+.hljs-emphasis {
+  font-style: italic;
+}
+
+.hljs-strong {
+  font-weight: bold;
+}
+
+.hljs-link {
+  text-decoration: underline;
 }

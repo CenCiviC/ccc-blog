@@ -1,5 +1,6 @@
 import { getPostBlobData, getRawPosts } from "@/api";
 import { marked } from "marked";
+import Code from "./code";
 
 export default async function Home() {
   const result = await getRawPosts();
@@ -7,7 +8,6 @@ export default async function Home() {
 
   const reversedPosts = result.reverse();
 
-  // 모든 sha와 name을 가져옵니다.
   const markdownContents = await Promise.all(
     reversedPosts.map(async ({ sha, name }) => {
       const content = await getPostBlobData(sha);
@@ -18,10 +18,14 @@ export default async function Home() {
 
   return (
     <div>
+      <div className=" w-32 h-32 bg-highlight">
+        <p className=" text-lightened">fwef</p>
+      </div>
+      <Code></Code>
+
       {markdownContents.map(({ name, markdown }, index) => (
-        <div key={index}>
+        <div className="bg-background" key={index}>
           <h1>{name}</h1>
-          {/* marked로 변환한 HTML을 dangerouslySetInnerHTML에 설정 */}
           <div
             dangerouslySetInnerHTML={{
               __html: marked(markdown),

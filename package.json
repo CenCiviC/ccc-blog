@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "highlight.js": "^11.10.0",
     "marked": "^15.0.3",
     "next": "15.0.4",
     "octokit": "^4.0.2",
