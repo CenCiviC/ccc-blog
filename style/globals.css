@@ -1,0 +1,41 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  font-size: 16px;
+  color: #222222;
+  box-sizing: border-box;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+  }
+}
+
+h1 {
+  font-size: 25.6px;
+  color: #d24b4b;
+  font-weight: 750;
+}
+
+h2 {
+  font-size: 24px;
+  color: #e4a30c;
+  font-weight: 700;
+}
+h3 {
+  font-size: 22.4px;
+  color: #5eb34d;
+  font-weight: 650;
+}
+h4 {
+  font-size: 20.8px;
+  color: #18a8dc;
+  font-weight: 600;
+}
+h5 {
+  font-size: 19.2px;
+  color: #8078ba;
+  font-weight: 550;
+}
