@@ -1,6 +1,5 @@
 import { getPostBlobData, getRawPosts } from "@/api";
-import { marked } from "marked";
-import Code from "./code";
+import Post from "@/components/post";
 
 export default async function Home() {
   const result = await getRawPosts();
@@ -21,17 +20,9 @@ export default async function Home() {
       <div className=" w-32 h-32 bg-highlight">
         <p className=" text-lightened">fwef</p>
       </div>
-      <Code></Code>
 
       {markdownContents.map(({ name, markdown }, index) => (
-        <div className="bg-background" key={index}>
-          <h1>{name}</h1>
-          <div
-            dangerouslySetInnerHTML={{
-              __html: marked(markdown),
-            }}
-          />
-        </div>
+        <Post key={index} name={name} markdown={markdown} />
       ))}
     </div>
   );

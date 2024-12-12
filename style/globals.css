@@ -10,6 +10,7 @@
   --highlight-color: rgb(146, 127, 189);
   --lightened-color: rgb(201, 192, 223);
   --light-color: rgb(249, 249, 249);
+  --codeblock-color: rgb(255, 253, 245);
   --h1-color: #d24b4b;
   --h2-color: #e4a30c;
   --h3-color: #5eb34d;
@@ -61,10 +62,15 @@ hue-6:   #986801
 hue-6-2: #c18401
 
 */
+pre {
+  @apply w-full h-max border-t-[30px] border-black rounded-md;
+
+  display: block;
+  background: var(--codeblock-color);
+}
 
 .hljs {
   color: #383a42;
-  background: #fafafa;
 }
 
 .hljs-comment,
@@ -76,7 +82,7 @@ hue-6-2: #c18401
 .hljs-doctag,
 .hljs-keyword,
 .hljs-formula {
-  color: #a626a4;
+  color: #8b83e1;
 }
 
 .hljs-section,

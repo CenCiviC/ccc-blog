@@ -17,8 +17,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={`${pretendard.className}`}>{children}</body>
-    </html>
+    <>
+      <html lang="en">
+        <body className={`${pretendard.className}`}>{children}</body>
+      </html>
+    </>
   );
 }
