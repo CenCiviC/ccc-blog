@@ -1,29 +1,34 @@
-import { getPostBlobData, getRawPosts } from "@/api";
+import getMarkdownFiles from "@/api";
 import Post from "@/components/post";
+import SideBar from "@/components/sidebar";
+import { PostType } from "@/lib/types";
 
 export default async function Home() {
-  const result = await getRawPosts();
-  if (!Array.isArray(result)) return;
+  // 함수 실행
+  const bucketName = "ccc-blog"; // S3 버킷 이름
+  const folderPath = "programming/"; // 폴더 경로
 
-  const reversedPosts = result.reverse();
+  const result = await getMarkdownFiles(bucketName, folderPath);
 
-  const markdownContents = await Promise.all(
-    reversedPosts.map(async ({ sha, name }) => {
-      const content = await getPostBlobData(sha);
-      const markdown = Buffer.from(content.content, "base64").toString("utf-8");
-      return { name, markdown };
-    })
-  );
+  const post: PostType = {
+    title: "test",
+    content: "content",
+    createdDate: new Date(),
+    modifiedDate: new Date(),
+  };
 
   return (
-    <div>
-      <div className=" w-32 h-32 bg-highlight">
-        <p className=" text-lightened">fwef</p>
-      </div>
+    <div className=" flex ">
+      <SideBar />
 
-      {markdownContents.map(({ name, markdown }, index) => (
-        <Post key={index} name={name} markdown={markdown} />
-      ))}
+      <div className="flex flex-col">
+        {post.createdDate.toUTCString()}
+        {Object.entries(result)
+          .reverse()
+          .map(([key, markdown], index) => (
+            <Post key={index} name={key} markdown={markdown} />
+          ))}
+      </div>
     </div>
   );
 }

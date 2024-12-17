@@ -10,6 +10,7 @@ interface PostProps {
 
 export default function Post({ name, markdown }: PostProps) {
   useHlcode();
+
   return (
     <div className=" bg-background">
       <h1>{name}</h1>

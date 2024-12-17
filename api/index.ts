@@ -1,51 +1,88 @@
-import { Octokit } from "octokit";
+import {
+  S3Client,
+  ListObjectsV2Command,
+  GetObjectCommand,
+} from "@aws-sdk/client-s3";
+import { Readable } from "stream";
 
-const GIT_ACCESS_TOKEN = process.env.NEXT_PUBLIC_GIT_ACCESS_TOKEN;
-const OWNER = process.env.NEXT_PUBLIC_OWNER ?? "";
-const REPO = process.env.NEXT_PUBLIC_REPO_NAME ?? "";
-const PATH = "programming";
-
-const octokit = new Octokit({
-  auth: GIT_ACCESS_TOKEN,
+const s3Client = new S3Client({
+  region: "ap-northeast-2", // 버킷의 aws 리전
+  credentials: {
+    accessKeyId: process.env.AWS_ACCESS_KEY ?? "", // 사용자 생성 시 발급받은 액세스 키
+    secretAccessKey: process.env.AWS_SECRET_KEY ?? "", // 사용자 생성 시 발급받은 비밀 액세스 키
+  },
 });
 
-export const getRawPosts = async () => {
-  try {
-    const { data } = await octokit.request(
-      "GET /repos/{owner}/{repo}/contents/{path}",
-      {
-        mediaType: {
-          format: "text",
-        },
-        owner: OWNER,
-        repo: REPO,
-        path: PATH,
-        headers: {
-          "X-GitHub-Api-Version": "2022-11-28",
-        },
-      }
-    );
-    return data;
-  } catch (err) {
-    throw new Error(`Failed to get: ${err}`);
-  }
-};
+// S3에서 특정 버킷과 폴더의 md 파일 가져오기
+export default async function getMarkdownFiles(
+  bucketName: string,
+  folderPath: string
+): Promise<Record<string, string>> {
+  const command = new ListObjectsV2Command({
+    Bucket: bucketName,
+    Prefix: folderPath, // 폴더 경로
+  });
 
-export const getPostBlobData = async (sha: string) => {
   try {
-    const { data } = await octokit.request(
-      "GET /repos/{owner}/{repo}/git/blobs/{file_sha}",
-      {
-        owner: OWNER,
-        repo: REPO,
-        file_sha: sha,
-        headers: {
-          "X-GitHub-Api-Version": "2022-11-28",
-        },
+    const fileContents: Record<string, string> = {};
+
+    const response = await s3Client.send(command);
+
+    if (!response.Contents) {
+      console.log("No files found in the specified folder.");
+      return fileContents;
+    }
+
+    // .md 파일만 필터링하고 등록된 날짜순 (LastModified)으로 정렬
+    const sortedFiles = response.Contents.filter(
+      (object) => object.Key && object.Key.endsWith(".md")
+    ).sort((a, b) => {
+      if (a.LastModified && b.LastModified) {
+        return a.LastModified.getTime() - b.LastModified.getTime(); // 등록된 날짜순 정렬
       }
-    );
-    return data;
-  } catch (err) {
-    throw new Error(`Failed to get: ${err}`);
+      return 0;
+    });
+
+    // .md 파일의 내용을 가져와 dict에 추가
+    for (const object of sortedFiles) {
+      if (object.Key) {
+        const content = await fetchFileContent(bucketName, object.Key);
+        fileContents[object.Key] = content; // dict에 key-value 추가
+      }
+    }
+
+    return fileContents;
+  } catch (error) {
+    console.error("Error fetching files from S3:", error);
+    return {};
   }
-};
+}
+
+// 특정 파일 내용을 가져와 출력
+async function fetchFileContent(bucketName: string, key: string) {
+  const command = new GetObjectCommand({
+    Bucket: bucketName,
+    Key: key,
+  });
+
+  try {
+    const response = await s3Client.send(command);
+    const stream = response.Body as Readable;
+    const content = await streamToString(stream);
+
+    return content;
+  } catch (error) {
+    console.error(`Error fetching content of ${key}:`, error);
+    return "";
+  }
+}
+
+// Readable Stream -> String 변환
+function streamToString(stream: Readable): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const chunks: any[] = [];
+    stream.on("data", (chunk) => chunks.push(chunk));
+    stream.on("end", () => resolve(Buffer.concat(chunks).toString("utf-8")));
+    stream.on("error", reject);
+  });
+}
