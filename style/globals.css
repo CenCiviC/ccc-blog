@@ -6,17 +6,32 @@
   box-sizing: border-box;
 
   /* color theme */
-  --background-color: rgb(246, 245, 249);
-  --highlight-color: rgb(146, 127, 189);
-  --lightened-color: rgb(201, 192, 223);
-  --light-color: rgb(249, 249, 249);
   --codeblock-color: rgb(255, 253, 245);
+  --text-color: #56575c;
   --h1-color: #d24b4b;
   --h2-color: #e4a30c;
   --h3-color: #5eb34d;
   --h4-color: #18a8dc;
   --h5-color: #8078ba;
   --p-color: #222222;
+  --link-color: #f0cb7a;
+  --internal-color: #76b6ca;
+
+  --primary-50: #f7f6f9;
+  --primary-100: #f0edf5;
+  --primary-200: #ede7f0;
+  --primary-300: #e2deed;
+  --primary-400: #d5d0e4;
+  --primary-500: #c9c1df;
+  --primary-900: #9480ba;
+  --sub-100: #edeef5;
+  --sub-200: #d2cddd;
+  --sub-300: #c7c4d5;
+  --sub-500: #aba5c1;
+}
+
+* {
+  @apply text-text;
 }
 
 @media (prefers-color-scheme: light) {

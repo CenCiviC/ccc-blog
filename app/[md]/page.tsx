@@ -4,10 +4,15 @@ import SideBar from "@/components/sidebar";
 import TopBar from "@/components/topbar";
 import { PostType, NodeType } from "@/lib/types";
 
-export default async function Home() {
+export default async function PostPage({
+  params,
+}: {
+  params: Promise<{ md: string }>;
+}) {
   // 함수 실행
   const bucketName = "ccc-blog"; // S3 버킷 이름
   const folderPath = "programming/"; // 폴더 경로
+  const slug = (await params).md;
 
   const result = await getMarkdownFiles(bucketName, folderPath);
 
@@ -61,10 +66,10 @@ export default async function Home() {
     <main className="flex flex-col w-full h-dvh">
       <TopBar />
       <div className="flex flex-1 w-full">
-        <SideBar node={fileSystem} current="" />
+        <SideBar node={fileSystem} current={slug} />
 
         <div className="flex bg-primary-50 w-full h-full">
-          <div className=" w-[75%] h-full">main content</div>
+          <div className=" w-[75%] h-full">{slug}</div>
           <div className=" w-[25%] h-full">index content</div>
         </div>
 
