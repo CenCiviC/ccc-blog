@@ -1,8 +1,8 @@
 import getMarkdownFiles from "@/api";
-import Post from "@/components/post";
 import SideBar from "@/components/sidebar";
 import TopBar from "@/components/topbar";
-import { PostType, NodeType } from "@/lib/types";
+import { PostType, FolderNode } from "@/lib/types";
+import Post from "@/components/post";
 
 export default async function Home() {
   // 함수 실행
@@ -18,45 +18,7 @@ export default async function Home() {
     modifiedDate: new Date(),
   };
 
-  const fileSystem: NodeType = {
-    type: "folder",
-    name: "root",
-    children: [
-      {
-        type: "folder",
-        name: "src",
-        children: [
-          {
-            type: "file",
-            name: "index.ts",
-            content: 'console.log("Hello World!");',
-          },
-          {
-            type: "folder",
-            name: "components",
-            children: [
-              {
-                type: "file",
-                name: "Button.tsx",
-                content: "export const Button = () => {};",
-              },
-              {
-                type: "file",
-                name: "Input.tsx",
-                content: "export const Input = () => {};",
-              },
-            ],
-          },
-        ],
-      },
-      {
-        type: "file",
-        name: "README.md",
-        content: "# Project Documentation",
-      },
-    ],
-  };
-
+  const fileSystem = buildFileSystem(result);
   return (
     <main className="flex flex-col w-full h-dvh">
       <TopBar />
@@ -64,19 +26,58 @@ export default async function Home() {
         <SideBar node={fileSystem} current="" />
 
         <div className="flex bg-primary-50 w-full h-full">
-          <div className=" w-[75%] h-full">main content</div>
+          <div className=" w-[75%] h-full">
+            <div className="flex flex-col">
+              {post.createdDate.toUTCString()}
+              {Object.entries(result)
+                .reverse()
+                .slice(3, 5)
+                .map(([key, markdown], index) => (
+                  <Post key={index} name={key} markdown={markdown} />
+                ))}
+            </div>
+          </div>
           <div className=" w-[25%] h-full">index content</div>
         </div>
-
-        {/* <div className="flex flex-col">
-          {post.createdDate.toUTCString()}
-          {Object.entries(result)
-            .reverse()
-            .map(([key, markdown], index) => (
-              <Post key={index} name={key} markdown={markdown} />
-            ))}
-        </div> */}
       </div>
     </main>
   );
+}
+
+function buildFileSystem(markdownFiles: Record<string, string>): FolderNode {
+  const root: FolderNode = { type: "folder", name: "root", children: [] };
+
+  function findOrCreateFolder(
+    pathSegments: string[],
+    currentNode: FolderNode
+  ): FolderNode {
+    if (pathSegments.length === 0) return currentNode;
+
+    const folderName = pathSegments[0];
+    let folder = currentNode.children.find(
+      (child) => child.type === "folder" && child.name === folderName
+    ) as FolderNode;
+
+    if (!folder) {
+      folder = { type: "folder", name: folderName, children: [] };
+      currentNode.children.push(folder);
+    }
+
+    return findOrCreateFolder(pathSegments.slice(1), folder);
+  }
+
+  Object.entries(markdownFiles).forEach(([filePath, content]) => {
+    const pathSegments = filePath.split("/");
+    const fileNameWithExtension = pathSegments.pop(); // Extract file name
+    const fileName = fileNameWithExtension?.replace(/\.md$/, "") || ""; // Remove .md extension
+
+    const parentFolder = findOrCreateFolder(pathSegments, root);
+    parentFolder.children.push({
+      type: "file",
+      name: fileName,
+      content,
+    });
+  });
+
+  return root;
 }

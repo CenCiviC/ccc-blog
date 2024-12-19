@@ -7,13 +7,13 @@ export type PostType = {
 
 export type NodeType = FileNode | FolderNode;
 
-type FileNode = {
+export type FileNode = {
   type: "file";
   name: string;
   content: string;
 };
 
-type FolderNode = {
+export type FolderNode = {
   type: "folder";
   name: string;
   children: NodeType[];

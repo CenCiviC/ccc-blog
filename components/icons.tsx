@@ -1,6 +1,10 @@
 export function CopySvg() {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+    <svg
+      className="shrink-0"
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+    >
       <g
         fill="none"
         stroke="currentColor"
@@ -19,6 +23,7 @@ export function CopySvg() {
 export function FileSvg({ isOpend }: { isOpend: boolean }) {
   return (
     <svg
+      className=" shrink-0"
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 24 24"
       width={20}
@@ -41,6 +46,7 @@ export function FileSvg({ isOpend }: { isOpend: boolean }) {
 export function FolderSvg({ isOpend }: { isOpend: boolean }) {
   return (
     <svg
+      className=" shrink-0"
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 42 42"
       width={20}
