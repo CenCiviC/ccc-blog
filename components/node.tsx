@@ -3,18 +3,17 @@ import { useState } from "react";
 import cn from "classnames";
 import Link from "next/link";
 import { FileSvg, FolderSvg } from "./icons";
+import { Directory } from "@/lib/types";
 
 interface NodeProps {
-  type: "file" | "folder";
-  name: string;
+  directory: Directory;
   isOpened: boolean;
   prefix?: number;
   children?: React.ReactNode;
 }
 
 export default function Node({
-  type,
-  name,
+  directory,
   isOpened: initialIsOpened,
   prefix = 0,
   children,
@@ -24,29 +23,29 @@ export default function Node({
   const leftPadding = prefix * 10 + 8;
   const containClass = cn(
     "flex items-center gap-2.5 p-2 rounded-[4px] w-full h-10",
-    { "bg-primary-900": isOpened && type === "file" },
-    { "hover:bg-primary-500": !(isOpened && type === "file") }
+    { "bg-primary-900": isOpened && directory.type === "file" },
+    { "hover:bg-primary-500": !(isOpened && directory.type === "file") }
   );
 
   const textClass = cn(" line-clamp-1 text-sm", {
-    "text-primary-50": isOpened && type === "file",
+    "text-primary-50": isOpened && directory.type === "file",
   });
 
   const handleToggle = () => {
-    if (type === "folder") {
+    if (directory.type === "folder") {
       setIsOpened(!isOpened);
     }
   };
 
-  if (type === "file") {
+  if (directory.type === "file") {
     return (
       <Link
         style={{ paddingLeft: leftPadding }}
-        href={`./${name}`}
+        href={`/dot/${directory.path}`}
         className={containClass}
       >
         <FileSvg isOpend={isOpened} />
-        <span className={textClass}>{name}</span>
+        <span className={textClass}>{directory.name}</span>
       </Link>
     );
   }
@@ -59,7 +58,7 @@ export default function Node({
         onClick={handleToggle}
       >
         <FolderSvg isOpend={isOpened} />
-        <span className={textClass}>{name}</span>
+        <span className={textClass}>{directory.name}</span>
       </button>
       <div
         className={cn("overflow-hidden transition-all ease-in-out", {

@@ -5,16 +5,18 @@ export type PostType = {
   modifiedDate: Date;
 };
 
-export type NodeType = FileNode | FolderNode;
+export type Directory = File | Folder;
 
-export type FileNode = {
+export type File = {
   type: "file";
   name: string;
-  content: string;
+  path: string;
+  content?: string;
 };
 
-export type FolderNode = {
+export type Folder = {
   type: "folder";
   name: string;
-  children: NodeType[];
+  path: string; //programming/aws/
+  subDirectories: Directory[];
 };

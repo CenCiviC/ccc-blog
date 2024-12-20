@@ -1,17 +1,19 @@
 import Node from "./node";
-import { NodeType } from "@/lib/types";
+import { Directory } from "@/lib/types";
 
 interface SideBarProps {
-  node: NodeType;
+  directory: Directory;
   current: string;
 }
 
-const renderNode = (node: NodeType, current: string) => {
-  if (node.type === "folder") {
+const renderNode = (directory: Directory, current: string) => {
+  if (directory.type === "folder") {
     return (
-      <Node key={node.name} name={node.name} type={node.type} isOpened={true}>
+      <Node key={directory.name} directory={directory} isOpened={true}>
         <div className="ml-4 border-l-2 border-sub-200">
-          {node.children.map((child) => renderNode(child, current))}
+          {directory.subDirectories.map((directory) =>
+            renderNode(directory, current)
+          )}
         </div>
       </Node>
     );
@@ -19,18 +21,17 @@ const renderNode = (node: NodeType, current: string) => {
 
   return (
     <Node
-      key={node.name}
-      name={node.name}
-      type={node.type}
-      isOpened={node.name === current}
+      key={directory.name}
+      directory={directory}
+      isOpened={directory.name === current}
     />
   );
 };
 
-export default function SideBar({ node, current }: SideBarProps) {
+export default function SideBar({ directory, current }: SideBarProps) {
   return (
     <nav className="flex flex-col shrink-0 w-[300px] h-full bg-sub-100 border-r-2 border-sub-300 p-6 gap-1">
-      {renderNode(node, current)}
+      {renderNode(directory, current)}
     </nav>
   );
 }
