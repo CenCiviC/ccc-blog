@@ -8,8 +8,8 @@ import { Readable } from "stream";
 const s3Client = new S3Client({
   region: "ap-northeast-2", // 버킷의 aws 리전
   credentials: {
-    accessKeyId: process.env.AWS_ACCESS_KEY ?? "", // 사용자 생성 시 발급받은 액세스 키
-    secretAccessKey: process.env.AWS_SECRET_KEY ?? "", // 사용자 생성 시 발급받은 비밀 액세스 키
+    accessKeyId: process.env.CCC_AWS_ACCESS_KEY ?? "", // 사용자 생성 시 발급받은 액세스 키
+    secretAccessKey: process.env.CCC_AWS_SECRET_KEY ?? "", // 사용자 생성 시 발급받은 비밀 액세스 키
   },
 });
 
