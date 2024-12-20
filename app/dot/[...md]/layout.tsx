@@ -5,8 +5,10 @@ import React from "react";
 
 export default async function DotLayout({
   children,
+  params,
 }: Readonly<{
   children: React.ReactNode;
+  params: Promise<{ md: string[] }>;
 }>) {
   // 함수 실행
   const bucketName = "ccc-blog"; // S3 버킷 이름
@@ -15,9 +17,12 @@ export default async function DotLayout({
   const result = await getFilesTitle(bucketName, folderPath);
   const fileSystem = buildFileSystem(result);
 
+  const slug = (await params).md;
+  const filePath = decodeURIComponent(slug.join("/"));
+
   return (
     <div className="flex flex-1 w-full">
-      <SideBar directory={fileSystem} current="" />
+      <SideBar directory={fileSystem} currentPath={filePath} />
 
       {children}
     </div>

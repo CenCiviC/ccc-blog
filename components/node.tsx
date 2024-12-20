@@ -21,7 +21,7 @@ export default function Node({
   const [isOpened, setIsOpened] = useState(initialIsOpened);
 
   const leftPadding = prefix * 10 + 8;
-  const containClass = cn(
+  const containrClass = cn(
     "flex items-center gap-2.5 p-2 rounded-[4px] w-full h-10",
     { "bg-primary-900": isOpened && directory.type === "file" },
     { "hover:bg-primary-500": !(isOpened && directory.type === "file") }
@@ -42,7 +42,7 @@ export default function Node({
       <Link
         style={{ paddingLeft: leftPadding }}
         href={`/dot/${directory.path}`}
-        className={containClass}
+        className={containrClass}
       >
         <FileSvg isOpend={isOpened} />
         <span className={textClass}>{directory.name}</span>
@@ -54,7 +54,7 @@ export default function Node({
     <div>
       <button
         style={{ paddingLeft: leftPadding }}
-        className={containClass}
+        className={containrClass}
         onClick={handleToggle}
       >
         <FolderSvg isOpend={isOpened} />
