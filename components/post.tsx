@@ -1,54 +1,46 @@
-//TODO : server side 에서 mark 하고 highlight만 client에서 하기
-"use client";
-import React, { useEffect, useState } from "react";
-import useHlcode from "@/hooks/useHlcode";
-import { marked, Renderer } from "marked";
+// app/components/Post.tsx
+import React from "react";
+import { Octokit } from "octokit";
 
 interface PostProps {
   name: string;
   markdown: string;
 }
 
-export default function Post({ name, markdown }: PostProps): React.JSX.Element {
-  const [htmlContent, setHtmlContent] = useState<string>("");
+const Post = async ({ name, markdown }: PostProps) => {
+  const baseUrl = `${process.env.CCC_CDN_DOMAIN}/attachment/`;
 
-  useHlcode();
+  const modifyImageUrls = (html: string): string => {
+    return html.replace(
+      /<img src="([^"]+)"/g,
+      (_, href) => `<img src="${baseUrl}${href}"`
+    );
+  };
 
-  useEffect(() => {
-    const generateHtml = async () => {
-      const renderer = new Renderer();
-      renderer.image = ({
-        href,
-        title,
-        text,
-      }: {
-        href: string | null;
-        title: string | null;
-        text: string | null;
-      }): string => {
-        const baseUrl = "https://dengtukgi5sf7.cloudfront.net/attachment/";
-        const modifiedHref = href ? `${baseUrl}${href}` : "";
-        return `<img src="${modifiedHref}" alt="${text || ""}" title="${
-          title || ""
-        }" />`;
-      };
+  const octokit = new Octokit({
+    auth: process.env.CCC_GITHUB_ACCESS_KEY ?? "",
+  });
 
-      // Parse the markdown with the custom renderer
-      const parsedHtml = marked(markdown, { renderer });
-      setHtmlContent(parsedHtml as string); // Ensure it sets the plain string result
-    };
+  const data = await octokit.request("POST /markdown", {
+    text: markdown,
+    headers: {
+      "X-GitHub-Api-Version": "2022-11-28",
+    },
+  });
 
-    generateHtml();
-  }, [markdown]);
+  const modifiedHtml = modifyImageUrls(data.data);
 
   return (
-    <div className="bg-background">
+    <div className="bg-background ">
       <h1>{name}</h1>
       <div
+        className="markdown-body"
         dangerouslySetInnerHTML={{
-          __html: htmlContent,
+          __html: modifiedHtml,
         }}
       />
     </div>
   );
-}
+};
+
+export default Post;
