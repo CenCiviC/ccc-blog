@@ -4,6 +4,7 @@ import {
   GetObjectCommand,
 } from "@aws-sdk/client-s3";
 import { Readable } from "stream";
+import { FileData } from "@/lib/types";
 
 const s3Client = new S3Client({
   region: "ap-northeast-2", // 버킷의 aws 리전
@@ -17,14 +18,14 @@ const s3Client = new S3Client({
 export async function getMarkdownFiles(
   bucketName: string,
   folderPath: string
-): Promise<Record<string, string>> {
+): Promise<Record<string, FileData>> {
   const command = new ListObjectsV2Command({
     Bucket: bucketName,
     Prefix: folderPath, // 폴더 경로
   });
 
   try {
-    const fileContents: Record<string, string> = {};
+    const fileContents: Record<string, FileData> = {};
 
     const response = await s3Client.send(command);
 
@@ -46,8 +47,15 @@ export async function getMarkdownFiles(
     // .md 파일의 내용을 가져와 dict에 추가
     for (const object of sortedFiles) {
       if (object.Key) {
-        const content = await fetchFileContent(bucketName, object.Key);
-        fileContents[object.Key] = content; // dict에 key-value 추가
+        const { content, lastModified, createdDate } = await fetchFileContent(
+          bucketName,
+          object.Key
+        );
+        fileContents[object.Key] = {
+          content,
+          lastModified,
+          createdDate,
+        };
       }
     }
 
@@ -102,7 +110,10 @@ export async function getFilesTitle(
 }
 
 // 특정 파일 내용을 가져와 출력
-export async function fetchFileContent(bucketName: string, key: string) {
+export async function fetchFileContent(
+  bucketName: string,
+  key: string
+): Promise<FileData> {
   const command = new GetObjectCommand({
     Bucket: bucketName,
     Key: key,
@@ -113,10 +124,18 @@ export async function fetchFileContent(bucketName: string, key: string) {
     const stream = response.Body as Readable;
     const content = await streamToString(stream);
 
-    return content;
+    return {
+      content,
+      lastModified: response.LastModified || null,
+      createdDate: null, // S3는 기본적으로 생성일자를 제공하지 않습니다
+    };
   } catch (error) {
     console.error(`Error fetching content of ${key}:`, error);
-    return "";
+    return {
+      content: "",
+      lastModified: null,
+      createdDate: null,
+    };
   }
 }
 
