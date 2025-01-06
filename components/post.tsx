@@ -10,32 +10,8 @@ interface PostProps {
   fileData: FileData;
 }
 
-const wrapPreWithCodeHeader = (html: string) => {
-  return html.replace(
-    /<pre([^>]*)>([\s\S]*?)<\/pre>/g,
-    (match, attributes, content) => `
-      <div class="relative my-4">
-        <div class="flex justify-between items-center px-3 h-[30px] bg-[#1e1e1e] rounded-t-md">
-          <div class="flex gap-2">
-            <div class="w-[10px] h-[10px] rounded-full bg-[#ff5f56]"></div>
-            <div class="w-[10px] h-[10px] rounded-full bg-[#ffbd2e]"></div>
-            <div class="w-[10px] h-[10px] rounded-full bg-[#27c93f]"></div>
-          </div>
-          <span 
-            class="text-[#6f9572] text-sm font-semibold px-2 py-1" 
-            data-content="${encodeURIComponent(content.trim())}"
-          >
-            TBD
-          </span>
-        </div>
-        <pre${attributes} class="mt-0 rounded-t-none">${content}</pre>
-      </div>
-    `
-  );
-};
-
 const Post = async ({ name, fileData }: PostProps) => {
-  const processedContent = wrapPreWithCodeHeader(fileData.content);
+  const processedContent = fileData.content;
 
   return (
     <>

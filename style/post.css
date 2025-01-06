@@ -1,3 +1,93 @@
+/* hljs */
+/*
+base:    #fafafa
+mono-1:  #383a42
+mono-2:  #686b77
+mono-3:  #a0a1a7
+hue-1:   #0184bb
+hue-2:   var(--h4-color)
+hue-3:   var(--h5-color)
+hue-4:   var(--h3-color)
+hue-5:   var(--h1-color)
+hue-5-2: #c91243
+hue-6:   var(--h2-color)
+hue-6-2: #c18401
+*/
+
+.hljs {
+  color: #383a42;
+  background: #fafafa;
+}
+
+.hljs-comment,
+.hljs-quote {
+  color: #a0a1a7;
+  font-style: italic;
+}
+
+.hljs-doctag,
+.hljs-keyword,
+.hljs-formula {
+  color: var(--h5-color);
+}
+
+.hljs-section,
+.hljs-name,
+.hljs-selector-tag,
+.hljs-deletion,
+.hljs-subst {
+  color: var(--h1-color);
+}
+
+.hljs-literal {
+  color: #0184bb;
+}
+
+.hljs-string,
+.hljs-regexp,
+.hljs-addition,
+.hljs-attribute,
+.hljs-meta .hljs-string {
+  color: var(--h3-color);
+}
+
+.hljs-attr,
+.hljs-variable,
+.hljs-template-variable,
+.hljs-type,
+.hljs-selector-class,
+.hljs-selector-attr,
+.hljs-selector-pseudo,
+.hljs-number {
+  color: var(--h2-color);
+}
+
+.hljs-symbol,
+.hljs-bullet,
+.hljs-link,
+.hljs-meta,
+.hljs-selector-id,
+.hljs-title {
+  color: var(--h4-color);
+}
+
+.hljs-built_in,
+.hljs-title.class_,
+.hljs-class .hljs-title {
+  color: #c18401;
+}
+
+.hljs-emphasis {
+  font-style: italic;
+}
+
+.hljs-strong {
+  font-weight: bold;
+}
+
+.hljs-link {
+  text-decoration: underline;
+}
 /* github */
 
 .markdown-body {
@@ -180,8 +270,8 @@
 
 .markdown-body a {
   background-color: transparent;
-  color: var(--fgColor-accent);
-  text-decoration: none;
+  color: var(--link-color);
+  text-decoration: underline;
 }
 
 .markdown-body abbr[title] {
@@ -284,6 +374,37 @@
   padding: 0;
 }
 
+.markdown-body input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 16px;
+  height: 16px;
+  border: 2px solid var(--primary-400);
+  border-radius: 3px;
+  margin: 0 0.2em 0.25em -1.4em;
+  vertical-align: middle;
+  position: relative;
+  cursor: pointer;
+}
+
+.markdown-body input[type="checkbox"]:checked {
+  background-color: var(--primary-900);
+  border-color: var(--primary-900);
+}
+
+.markdown-body input[type="checkbox"]:checked::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 4px;
+  height: 8px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: translate(-50%, -50%) rotate(45deg);
+}
+
 .markdown-body [type="number"]::-webkit-inner-spin-button,
 .markdown-body [type="number"]::-webkit-outer-spin-button {
   height: auto;
@@ -349,7 +470,7 @@
 .markdown-body [role="button"]:focus,
 .markdown-body input[type="radio"]:focus,
 .markdown-body input[type="checkbox"]:focus {
-  outline: 2px solid var(--focus-outlineColor);
+  outline: 2px solid var(--primary-900);
   outline-offset: -2px;
   box-shadow: none;
 }
@@ -452,7 +573,8 @@
   margin: 0;
   padding: 0 1em;
   color: var(--fgColor-muted);
-  border-left: 0.25em solid var(--borderColor-default);
+  border-left: 0.25em solid var(--primary-900);
+  background-color: var(--primary-200);
 }
 
 .markdown-body ul,
@@ -662,6 +784,25 @@
   list-style-type: none;
 }
 
+.markdown-body ul {
+  list-style-type: disc;
+}
+
+.markdown-body ul li::marker,
+.markdown-body ol li::marker {
+  color: var(--primary-900);
+  font-size: 1em;
+  font-weight: bold;
+}
+
+.markdown-body ol {
+  list-style-type: decimal;
+}
+
+.markdown-body ul li:has(input[type="checkbox"])::marker {
+  content: none;
+}
+
 .markdown-body ol[type="a s"] {
   list-style-type: lower-alpha;
 }
@@ -720,13 +861,14 @@
 }
 
 .markdown-body table th {
-  font-weight: var(--base-text-weight-semibold, 600);
+  font-weight: var(--base-text-weight-bold, 700);
+  background-color: var(--primary-200);
 }
 
 .markdown-body table th,
 .markdown-body table td {
   padding: 6px 13px;
-  border: 1px solid var(--borderColor-default);
+  border: 1px solid var(--primary-400);
 }
 
 .markdown-body table td > :last-child {
@@ -735,11 +877,11 @@
 
 .markdown-body table tr {
   background-color: var(--bgColor-default);
-  border-top: 1px solid var(--borderColor-muted);
+  border-top: 1px solid var(--primary-400);
 }
 
 .markdown-body table tr:nth-child(2n) {
-  background-color: var(--bgColor-muted);
+  background-color: var(--primary-200);
 }
 
 .markdown-body table img {
@@ -854,8 +996,13 @@
   margin: 0;
   font-size: 85%;
   white-space: break-spaces;
-  background-color: var(--bgColor-neutral-muted);
+  background-color: var(--primary-200);
+  border: 1px solid var(--primary-400);
   border-radius: 6px;
+}
+
+.markdown-body p code {
+  color: var(--h1-color);
 }
 
 .markdown-body code br,
@@ -900,7 +1047,7 @@
   font-size: 85%;
   line-height: 1.45;
   color: var(--fgColor-default);
-  background-color: var(--codeblock-color);
+  background-color: var(--primary-100);
   border-radius: 6px;
 }
 
