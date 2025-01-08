@@ -14,7 +14,7 @@ interface DotPageProps {
 const BUCKET_NAME = "ccc-blog";
 const FOLDER_PATH = "programming/";
 
-export const revalidate = 60;
+export const revalidate = false;
 
 export const dynamicParams = true; // or false, to 404 on unknown paths
 

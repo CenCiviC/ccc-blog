@@ -8,8 +8,8 @@ const pretendard = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "cencivic",
-  description: "1.5",
+  title: "kyungbin.im",
+  description: "임경빈의 블로그입니다.",
 };
 
 export default function RootLayout({
