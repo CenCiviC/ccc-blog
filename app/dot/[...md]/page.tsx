@@ -16,7 +16,7 @@ const FOLDER_PATH = "programming/";
 
 export const revalidate = 60;
 
-export const dynamicParams = false; // or false, to 404 on unknown paths
+export const dynamicParams = true; // or false, to 404 on unknown paths
 
 export async function generateStaticParams() {
   //전체 파일 목록 가져오기
@@ -39,7 +39,8 @@ export default async function DotPage({ params }: DotPageProps) {
   );
   await getMarkdownFiles(BUCKET_NAME, FOLDER_PATH);
 
-  fileData.content = await convertMarkdownToHtml(fileData.content, baseUrl);
+  const htmlContent = await convertMarkdownToHtml(fileData.content, baseUrl);
+  fileData.content = htmlContent;
 
   return (
     <div className="flex bg-primary-50 w-full h-full p-[30px]">
