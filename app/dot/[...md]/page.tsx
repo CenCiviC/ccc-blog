@@ -1,4 +1,4 @@
-import { fetchFileContent, getMarkdownFiles } from "@/api";
+import { fetchFileContent, getFilesTitle, getMarkdownFiles } from "@/api";
 import Post from "@/components/post";
 import Toc from "./toc";
 import { marked } from "marked";
@@ -13,6 +13,19 @@ interface DotPageProps {
 
 const BUCKET_NAME = "ccc-blog";
 const FOLDER_PATH = "programming/";
+
+export const revalidate = 60;
+
+export const dynamicParams = false; // or false, to 404 on unknown paths
+
+export async function generateStaticParams() {
+  //전체 파일 목록 가져오기
+  const titles = await getFilesTitle(BUCKET_NAME, FOLDER_PATH);
+
+  return titles.map((title) => ({
+    md: String(title).split("/"),
+  }));
+}
 
 export default async function DotPage({ params }: DotPageProps) {
   const slug = (await params).md;

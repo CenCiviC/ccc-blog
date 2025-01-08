@@ -51,7 +51,6 @@ function buildFileSystem(markdownFiles: Array<string>): Folder {
       folder = {
         type: "folder",
         name: folderName,
-        // path: `${currentNode.path}/${folderName}/`,
         path: `${folderName}/`,
         subDirectories: [],
       };
