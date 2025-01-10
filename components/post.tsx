@@ -34,6 +34,7 @@ const Post = async ({ name, fileData }: PostProps) => {
             __html: processedContent,
           }}
         />
+        <footer className="w-full h-[400px] min-h-[400px]" />
       </div>
     </>
   );

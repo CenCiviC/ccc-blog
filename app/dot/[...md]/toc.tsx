@@ -42,7 +42,7 @@ export default function Toc({ fileData, currentPath }: TocProps) {
   }, []);
 
   return (
-    <div className="w-full h-max sticky top-[120px]">
+    <div className=" h-max fixed top-[120px]">
       {h2Headings.map((heading, index) => (
         <Anchor
           key={index}

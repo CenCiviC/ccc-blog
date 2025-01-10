@@ -1001,7 +1001,7 @@ hue-6-2: #c18401
   border-radius: 6px;
 }
 
-.markdown-body p code {
+.markdown-body code {
   color: var(--h1-color);
 }
 
@@ -1020,6 +1020,7 @@ hue-6-2: #c18401
 
 .markdown-body pre code {
   font-size: 100%;
+  color: var(--text-color);
 }
 
 .markdown-body pre > code {

@@ -20,7 +20,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${pretendard.className}`}>
-        <main className="flex flex-col w-full h-dvh">
+        <main className="flex flex-col h-dvh">
           <TopBar />
           {children}
         </main>

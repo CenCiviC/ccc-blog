@@ -15,7 +15,7 @@ export default function Anchor({ text, href, isActive }: AnchorProps) {
   );
   return (
     <Link href={href} className={containerClass}>
-      {text}
+      <span className="line-clamp-1">{text}</span>
     </Link>
   );
 }

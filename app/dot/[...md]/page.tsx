@@ -43,13 +43,13 @@ export default async function DotPage({ params }: DotPageProps) {
   fileData.content = htmlContent;
 
   return (
-    <div className="flex bg-primary-50 w-full h-full p-[30px]">
-      <div className="flex w-[75%] h-full px-8 ">
+    <div className="flex bg-primary-50 w-full h-full p-[30px] overflow-y-scroll overscroll-none">
+      <div className="flex w-[75%] h-full px-8">
         <div className="flex flex-col w-full max-w-[820px] mx-auto">
           <Post name={fileName} fileData={fileData} />
         </div>
       </div>
-      <div className=" w-[25%] h-full p-8">
+      <div className="relative w-[25%] h-full  p-8">
         <Toc fileData={fileData} currentPath={filePath} />
       </div>
     </div>
@@ -92,21 +92,22 @@ const convertMarkdownToHtml = async (
 
   // TODO: 코드 블럭 처리
   renderer.code = ({ lang, text }) => {
-    return `<div class="relative my-4">
-    <div class="flex justify-between items-center px-3 h-[30px] bg-[#1e1e1e] rounded-t-md">
-    <div class="flex gap-2">
-    <div class="w-[10px] h-[10px] rounded-full bg-[#ff5f56]"></div>
-    <div class="w-[10px] h-[10px] rounded-full bg-[#ffbd2e]"></div>
-    <div class="w-[10px] h-[10px] rounded-full bg-[#27c93f]"></div>
-    </div>
-    <span
-    class="text-[#6f9572] text-sm font-semibold px-2 py-1"
-    data-content="${encodeURIComponent(content.trim())}"
-    >
-    ${lang?.toUpperCase()}
-    </span>
-    </div>
-    <pre><code class="language-${lang} hljs">${
+    return `
+    <div class="relative my-4">
+      <div class="flex justify-between items-center px-3 h-[30px] bg-[#1e1e1e] rounded-t-md">
+        <div class="flex gap-2">
+          <div class="w-[10px] h-[10px] rounded-full bg-[#ff5f56]"></div>
+          <div class="w-[10px] h-[10px] rounded-full bg-[#ffbd2e]"></div>
+          <div class="w-[10px] h-[10px] rounded-full bg-[#27c93f]"></div>
+        </div>
+        <span
+        class="text-[#6f9572] text-sm font-semibold px-2 py-1"
+        data-content="${encodeURIComponent(content.trim())}"
+        >
+        ${lang?.toUpperCase()}
+        </span>
+      </div>
+      <pre><code class="language-${lang} hljs">${
       hljs.highlightAuto(text).value
     }</code></pre>
     </div>`;

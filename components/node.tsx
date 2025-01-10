@@ -27,7 +27,7 @@ export default function Node({
     { "hover:bg-primary-500": !(isOpened && directory.type === "file") }
   );
 
-  const textClass = cn(" line-clamp-1 text-sm", {
+  const textClass = cn("line-clamp-1 text-sm", {
     "text-primary-50": isOpened && directory.type === "file",
   });
 
