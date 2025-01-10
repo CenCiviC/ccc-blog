@@ -31,6 +31,9 @@
 
   /* size */
   --topbar-height: 60px;
+  --sidebar-height: calc(100dvh - var(--topbar-height));
+  --padding: 30px;
+  --toc-top: calc(var(--topbar-height) + var(--padding));
 }
 
 * {

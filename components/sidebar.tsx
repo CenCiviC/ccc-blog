@@ -32,7 +32,7 @@ const renderNode = (directory: Directory, currentPath: string) => {
 
 export default function SideBar({ directory, currentPath }: SideBarProps) {
   return (
-    <aside className="flex flex-col shrink-0 w-[300px] h-full overflow-y-scroll scroll-hide overscroll-none bg-sub-100 border-r-2 border-sub-300 p-6 gap-1">
+    <aside className="flex flex-col sticky top-[var(--topbar-height)] shrink-0 w-[300px] h-[var(--sidebar-height)] overflow-y-scroll scroll-hide overscroll-none bg-sub-100 border-r-2 border-sub-300 p-6 gap-1">
       {renderNode(directory, currentPath)}
 
       {/* 여유공간 */}

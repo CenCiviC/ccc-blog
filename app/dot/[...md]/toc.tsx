@@ -32,8 +32,8 @@ export default function Toc({ fileData, currentPath }: TocProps) {
 
     const observer = new IntersectionObserver(callback, {
       root: null,
-      rootMargin: "0px 0px -90% 0px",
-      threshold: [0, 0.1, 0.5, 1],
+      // rootMargin: "0px 0px -70% 0px",
+      // threshold: [0, 0.1, 0.5, 1],
     });
 
     document.querySelectorAll("h2").forEach((h2) => observer.observe(h2));
@@ -42,7 +42,7 @@ export default function Toc({ fileData, currentPath }: TocProps) {
   }, []);
 
   return (
-    <div className=" h-max fixed top-[120px]">
+    <div className="w-full h-max ">
       {h2Headings.map((heading, index) => (
         <Anchor
           key={index}

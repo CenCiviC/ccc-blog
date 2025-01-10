@@ -21,7 +21,7 @@ export default async function DotLayout({
   const filePath = decodeURIComponent(slug.join("/"));
 
   return (
-    <div className="flex flex-1 w-full h-full pt-[var(--topbar-height)]">
+    <div className="flex flex-1 w-full h-full mt-[var(--topbar-height)]">
       <SideBar directory={fileSystem} currentPath={filePath} />
 
       {children}
