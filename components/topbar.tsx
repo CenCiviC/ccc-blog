@@ -3,7 +3,7 @@ import Link from "next/link";
 
 export default function TopBar() {
   return (
-    <nav className="flex fixed z-50 top-0 left-0 items-center justify-between shrink-0 w-full h-[var(--topbar-height)] px-[30px] bg-primary-300 font-semibold border-b-2 border-sub-300">
+    <nav className="flex sticky z-50 top-0 left-0 items-center justify-between shrink-0 w-full h-[var(--topbar-height)] px-[30px] bg-primary-300 font-semibold border-b-2 border-sub-300">
       <div className="flex items-center gap-2">
         <Link href={"/"}>
           <span>Symbol</span>

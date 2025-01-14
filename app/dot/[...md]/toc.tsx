@@ -32,8 +32,8 @@ export default function Toc({ fileData, currentPath }: TocProps) {
 
     const observer = new IntersectionObserver(callback, {
       root: null,
-      // rootMargin: "0px 0px -70% 0px",
-      // threshold: [0, 0.1, 0.5, 1],
+      rootMargin: "-50px 0px -70% 0px",
+      threshold: [0, 1],
     });
 
     document.querySelectorAll("h2").forEach((h2) => observer.observe(h2));
