@@ -283,6 +283,7 @@ hue-6-2: #c18401
 .markdown-body b,
 .markdown-body strong {
   font-weight: var(--base-text-weight-semibold, 600);
+  color: var(--h1-color);
 }
 
 .markdown-body dfn {

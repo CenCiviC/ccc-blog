@@ -1,21 +1,47 @@
 import Image from "next/image";
 import Link from "next/link";
+import { DotsSvg, QuestionMarkSvg } from "./icons";
+import SearchBar from "./searchbar";
 
 export default function TopBar() {
   return (
     <nav className="flex sticky z-50 top-0 left-0 items-center justify-between shrink-0 w-full h-[var(--topbar-height)] px-[30px] bg-primary-300 font-semibold border-b-2 border-sub-300">
       <div className="flex items-center gap-2">
-        <Link href={"/"}>
-          <span>Symbol</span>
-          <span>CenCiviC</span>
+        <Link
+          href={"/dot/programming/docker/Docker%20관련%20명령어.md"}
+          className="hover:text-primary-900 group"
+        >
+          <div className="flex items-center rounded-md hover:bg-primary-500 px-2 py-1 gap-1.5">
+            <QuestionMarkSvg color="var(--text-color)" />
+            <span className="text-text">Who am i?</span>
+          </div>
         </Link>
         <Link
           href={"/dot/programming/docker/Docker%20관련%20명령어.md"}
-          className=" hover:text-primary-900"
+          className="hover:text-primary-900 group"
         >
-          Dots
+          <div className="flex items-center rounded-md hover:bg-primary-500 px-2 py-1 gap-1.5">
+            <DotsSvg color="var(--text-color)" />
+            <span className="text-text">Dots</span>
+          </div>
         </Link>
       </div>
+      <Link href={"/"} className="flex items-center gap-1.5 group">
+        <Image
+          src="/img/logo-black.png"
+          alt="logo"
+          width={48}
+          height={40}
+          className="object-contain group-hover:hidden"
+        />
+        <Image
+          src="/img/logo.png"
+          alt="logo"
+          width={48}
+          height={40}
+          className="object-contain hidden group-hover:block"
+        />
+      </Link>
       <div className="flex items-center gap-5">
         <Link href={"https://github.com/CenCiviC"}>
           <Image
@@ -37,7 +63,7 @@ export default function TopBar() {
             height={24}
           />
         </Link>
-        <span>Search</span>
+        <SearchBar />
       </div>
     </nav>
   );

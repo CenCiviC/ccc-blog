@@ -1,8 +1,14 @@
-import { fetchFileContent, getFilesTitle, getMarkdownFiles } from "@/api";
+import {
+  fetchFileContent,
+  getFilesTitle,
+  getMarkdownFiles,
+  getSearchableDocuments,
+} from "@/api";
 import Post from "@/components/post";
 import Toc from "./toc";
 import { marked } from "marked";
 import hljs from "highlight.js";
+import { addDocuments } from "@/api/meiliesearch";
 interface PageParams {
   md: string[];
 }
@@ -19,8 +25,15 @@ export const revalidate = false;
 export const dynamicParams = true; // or false, to 404 on unknown paths
 
 export async function generateStaticParams() {
-  //전체 파일 목록 가져오기
   const titles = await getFilesTitle(BUCKET_NAME, FOLDER_PATH);
+  const documents = await getSearchableDocuments(BUCKET_NAME, FOLDER_PATH);
+
+  try {
+    // 실제 데이터
+    await addDocuments(documents);
+  } catch (error) {
+    console.log(error);
+  }
 
   return titles.map((title) => ({
     md: String(title).split("/"),

@@ -148,3 +148,30 @@ function streamToString(stream: Readable): Promise<string> {
     stream.on("error", reject);
   });
 }
+
+// 검색 가능한 형태로 문서들을 변환하는 함수
+export async function getSearchableDocuments(
+  bucketName: string,
+  folderPath: string
+) {
+  const files = await getMarkdownFiles(bucketName, folderPath);
+
+  return Object.entries(files).map(([key, file]) => {
+    // 파일 경로에서 파일명 추출 (확장자 제외)
+    const pathParts = key.split("/");
+    const fileName = pathParts[pathParts.length - 1].replace(/\.md$/, "");
+
+    // UUID v4 형식으로 인코딩
+    const id = Buffer.from(fileName)
+      .toString("base64")
+      .replace(/=/g, "")
+      .replace(/\+/g, "-")
+      .replace(/\//g, "_");
+
+    return {
+      id,
+      title: key.replace(/\.md$/, "").replace(/^\/+/, ""),
+      content: file.content,
+    };
+  });
+}
