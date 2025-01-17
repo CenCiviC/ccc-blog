@@ -6,7 +6,7 @@ const INDEX_NAME = "markdown-file";
 
 const client = new MeiliSearch({
   host: "https://search.kyungbin.im/",
-  apiKey: "pNVklica3ceMwaHznCAekzIzsgAKDd12RrCBAvpI_Yk",
+  apiKey: process.env.CCC_MEILISEARCH_API_KEY,
 });
 
 export async function addDocuments(
