@@ -8,7 +8,7 @@ import Post from "@/components/post";
 import Toc from "./toc";
 import { marked } from "marked";
 import hljs from "highlight.js";
-import { addDocuments } from "@/api/meiliesearch";
+import { addDocuments } from "@/api/meilisearch";
 interface PageParams {
   md: string[];
 }
