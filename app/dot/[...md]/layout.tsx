@@ -1,4 +1,4 @@
-import { getFilesTitle } from "@/api";
+import { getMarkdownTitles } from "@/api/aws-s3";
 import SideBar from "@/components/sidebar";
 import { Folder } from "@/lib/types";
 import React from "react";
@@ -10,12 +10,8 @@ export default async function DotLayout({
   children: React.ReactNode;
   params: Promise<{ md: string[] }>;
 }>) {
-  // 함수 실행
-  const bucketName = "ccc-blog"; // S3 버킷 이름
-  const folderPath = "programming/"; // 폴더 경로
-
-  const result = await getFilesTitle(bucketName, folderPath);
-  const fileSystem = buildFileSystem(result);
+  const mdTitles = await getMarkdownTitles();
+  const fileSystem = buildFileSystem(mdTitles);
 
   const slug = (await params).md;
   const filePath = decodeURIComponent(slug.join("/"));
@@ -28,7 +24,7 @@ export default async function DotLayout({
     </div>
   );
 }
-function buildFileSystem(markdownFiles: Array<string>): Folder {
+function buildFileSystem(markdownTitles: Array<string>): Folder {
   const root: Folder = {
     type: "folder",
     name: "root",
@@ -60,7 +56,7 @@ function buildFileSystem(markdownFiles: Array<string>): Folder {
     return findOrCreateFolder(pathSegments.slice(1), folder);
   }
 
-  markdownFiles.map((filePath) => {
+  markdownTitles.map((filePath) => {
     const pathSegments = filePath.split("/");
     const fileNameWithExtension = pathSegments.pop(); // Extract file name
     const fileName = fileNameWithExtension?.replace(/\.md$/, "") || ""; // Remove .md extension

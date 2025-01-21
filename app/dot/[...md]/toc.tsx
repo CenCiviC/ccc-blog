@@ -1,19 +1,19 @@
 "use client";
 
 import Anchor from "@/components/anchor";
-import { FileData } from "@/lib/types";
+import { MDData } from "@/lib/types";
 import { useEffect, useState } from "react";
 
 interface TocProps {
-  fileData: FileData;
+  markdownData: MDData;
   currentPath: string;
 }
 
-export default function Toc({ fileData, currentPath }: TocProps) {
+export default function Toc({ markdownData, currentPath }: TocProps) {
   const [activeId, setActiveId] = useState<string>("");
 
   // Extract h2 headings from HTML content - Move this outside of component render
-  const h2Headings = extractHeadings(fileData.content);
+  const h2Headings = extractHeadings(markdownData.content);
 
   useEffect(() => {
     const callback = (entries: IntersectionObserverEntry[]) => {
@@ -30,9 +30,10 @@ export default function Toc({ fileData, currentPath }: TocProps) {
       }
     };
 
+    const TOPBAR_MARGIN_HEIGHT_PROXIMITY = 50;
     const observer = new IntersectionObserver(callback, {
       root: null,
-      rootMargin: "-50px 0px -70% 0px",
+      rootMargin: `-${TOPBAR_MARGIN_HEIGHT_PROXIMITY}px 0px -70% 0px`,
       threshold: [0, 1],
     });
 

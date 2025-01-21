@@ -1,9 +1,8 @@
 import {
-  fetchFileContent,
-  getFilesTitle,
-  getMarkdownFiles,
-  getSearchableDocuments,
-} from "@/api";
+  getMarkdownContent,
+  getMarkdownTitles,
+  getAllMarkdownDatas,
+} from "@/api/aws-s3";
 import Post from "@/components/post";
 import Toc from "./toc";
 import { marked } from "marked";
@@ -17,16 +16,13 @@ interface DotPageProps {
   params: Promise<PageParams>;
 }
 
-const BUCKET_NAME = "ccc-blog";
-const FOLDER_PATH = "programming/";
-
-export const revalidate = false;
+export const revalidate = 60;
 
 export const dynamicParams = true; // or false, to 404 on unknown paths
 
 export async function generateStaticParams() {
-  const titles = await getFilesTitle(BUCKET_NAME, FOLDER_PATH);
-  const documents = await getSearchableDocuments(BUCKET_NAME, FOLDER_PATH);
+  const titles = await getMarkdownTitles();
+  const documents = await getAllMarkdownDatas();
 
   try {
     // 실제 데이터
@@ -43,16 +39,11 @@ export async function generateStaticParams() {
 export default async function DotPage({ params }: DotPageProps) {
   const slug = (await params).md;
   const filePath = decodeURIComponent(slug.join("/"));
+  const fileData = await getMarkdownContent(filePath);
+
   const fileName = filePath.split("/").pop()?.replace(/\.md$/, "") as string;
-  const baseUrl = `${process.env.CCC_CDN_DOMAIN}/attachment/`;
 
-  const fileData = await fetchFileContent(
-    BUCKET_NAME,
-    decodeURIComponent(filePath)
-  );
-  await getMarkdownFiles(BUCKET_NAME, FOLDER_PATH);
-
-  const htmlContent = await convertMarkdownToHtml(fileData.content, baseUrl);
+  const htmlContent = await convertMarkdownToHtml(fileData.content);
   fileData.content = htmlContent;
 
   return (
@@ -63,21 +54,19 @@ export default async function DotPage({ params }: DotPageProps) {
         </div>
       </div>
       <div className="sticky top-[var(--toc-top)] w-[25%] h-full p-8">
-        <Toc fileData={fileData} currentPath={filePath} />
+        <Toc markdownData={fileData} currentPath={filePath} />
       </div>
     </div>
   );
 }
 
-const convertMarkdownToHtml = async (
-  content: string,
-  baseUrl: string
-): Promise<string> => {
+const convertMarkdownToHtml = async (content: string): Promise<string> => {
   const renderer = new marked.Renderer();
 
   // Customize image rendering
   renderer.image = ({ href, title, text }) => {
-    const imageUrl = `${baseUrl}${href}`;
+    const baseUrl = `${process.env.CCC_CDN_IMAGE_DOMAIN}`;
+    const imageUrl = `${baseUrl}/${href}`;
     return `<img src="${imageUrl}" alt="${text}"${
       title ? ` title="${title}"` : ""
     }>`;

@@ -2,12 +2,12 @@
 
 import React from "react";
 
-import { FileData } from "@/lib/types";
+import { MDData } from "@/lib/types";
 import "@/style/post.css";
 
 interface PostProps {
   name: string;
-  fileData: FileData;
+  fileData: MDData;
 }
 
 const Post = async ({ name, fileData }: PostProps) => {
@@ -17,10 +17,10 @@ const Post = async ({ name, fileData }: PostProps) => {
     <>
       <div className="bg-background">
         <h1>{name}</h1>
-        {fileData.lastModified && (
+        {fileData.lastModifiedDate && (
           <p className="text-gray-500">
             마지막 수정일:{" "}
-            {fileData.lastModified.toLocaleDateString("ko-KR", {
+            {fileData.lastModifiedDate.toLocaleDateString("ko-KR", {
               year: "numeric",
               month: "2-digit",
               day: "2-digit",

@@ -1,7 +1,5 @@
 import { MeiliSearch } from "meilisearch";
 
-const BUCKET_NAME = "ccc-blog";
-const FOLDER_PATH = "programming/";
 const INDEX_NAME = "markdown-file";
 
 const client = new MeiliSearch({

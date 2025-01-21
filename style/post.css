@@ -270,8 +270,12 @@ hue-6-2: #c18401
 
 .markdown-body a {
   background-color: transparent;
-  color: var(--link-color);
+  color: var(--h4-color);
   text-decoration: underline;
+}
+
+.markdown-body a:hover {
+  background-color: rgba(24, 168, 220, 0.2);
 }
 
 .markdown-body abbr[title] {

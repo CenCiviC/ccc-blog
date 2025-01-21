@@ -4,15 +4,10 @@ import { searchDocuments } from "@/api/meilisearch";
 import { FileSvg, MagnifyingGlassSvg } from "./icons";
 import { useState } from "react";
 import Link from "next/link";
+import { MDData } from "@/lib/types";
 
-interface SearchResult {
-  id: string;
-  title: string;
-  content: string;
-  _formatted: {
-    title: string;
-    content: string;
-  };
+interface SearchResult extends MDData {
+  _formatted: MDData;
 }
 
 export default function SearchModal({
@@ -26,6 +21,7 @@ export default function SearchModal({
     const searchQuery = event.target.value;
     const results = await searchDocuments(searchQuery);
     setSearchResults(results.hits as SearchResult[]);
+    console.log(results.hits as SearchResult[]);
   }
 
   return (
@@ -77,7 +73,7 @@ function SearchResultItem({
 }) {
   return (
     <Link
-      href={`/dot/${result.title}.md`}
+      href={`/dot/${result.path}`}
       key={result.id}
       onClick={() => setIsOpen(false)}
       className="flex items-center justify-between h-[60px] bg-primary-50 group hover:bg-primary-900 rounded-lg p-4 gap-2.5"

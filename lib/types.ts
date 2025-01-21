@@ -1,8 +1,9 @@
-export type PostType = {
-  title: string;
+export type MDData = {
+  id: string; // uuid v4
+  path: string; // 파일 경로 ex. programming/aws/file.md
+  title: string; // key에서 확장자와 경로 제거
   content: string;
-  createdDate: Date;
-  modifiedDate: Date;
+  lastModifiedDate: Date | undefined;
 };
 
 export type Directory = File | Folder;
@@ -12,12 +13,6 @@ export type File = {
   name: string;
   path: string; // ex. programming/aws/file.md
   content?: string;
-};
-
-export type FileData = {
-  content: string;
-  lastModified: Date | null;
-  createdDate: Date | null;
 };
 
 export type Folder = {
