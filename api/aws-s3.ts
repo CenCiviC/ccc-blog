@@ -29,7 +29,7 @@ const s3Client = new S3Client({
 const DEFAULT_BUCKET_NAME = "ccc-blog";
 const DEFAULT_FOLDER_PATHS = ["programming/", "side project/"];
 
-// S3에서 폴더 내 파일 이름 가져오기
+// S3에서 폴더 내 파일 이름 가져오기 - 폴더 경로가 이름
 export async function getMarkdownTitles(
   bucketName: string = DEFAULT_BUCKET_NAME,
   folderPaths: string | string[] = DEFAULT_FOLDER_PATHS
