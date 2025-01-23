@@ -10,6 +10,9 @@ const pretendard = localFont({
 export const metadata: Metadata = {
   title: "kyungbin.im",
   description: "임경빈의 블로그입니다.",
+  icons: {
+    icon: "/img/logo-circle.ico",
+  },
 };
 
 export default function RootLayout({
