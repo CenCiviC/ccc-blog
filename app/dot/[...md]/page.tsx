@@ -72,6 +72,27 @@ const convertMarkdownToHtml = async (content: string): Promise<string> => {
     }>`;
   };
 
+  // Customize link rendering to use absolute paths
+  renderer.link = ({ href, title, text }) => {
+    if (!href) return text;
+
+    if (href.startsWith("#")) {
+      // If it's an anchor link, keep it as is
+      return `<a href="${href}"${title ? ` title="${title}"` : ""}>${text}</a>`;
+    }
+
+    if (href.startsWith("http")) {
+      // If it already has http/https, keep as is
+      return `<a href="${href}"${title ? ` title="${title}"` : ""}>${text}</a>`;
+    }
+
+    // Add domain for relative paths
+    const absoluteHref = `https://www.kyungbin.im/dot/${href}`;
+    return `<a href="${absoluteHref}"${
+      title ? ` title="${title}"` : ""
+    }>${text}</a>`;
+  };
+
   // Customize h2 rendering
   renderer.heading = ({ tokens, depth }) => {
     if (depth === 2) {
