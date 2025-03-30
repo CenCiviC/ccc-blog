@@ -23,7 +23,6 @@ export const dynamicParams = true; // or false, to 404 on unknown paths
 export async function generateStaticParams() {
   const titles = await getMarkdownTitles();
   const documents = await getAllMarkdownDatas();
-
   try {
     // 실제 데이터
     await addDocuments(documents);

@@ -9,14 +9,28 @@ interface SideBarProps {
   currentPath: string;
 }
 
+const sortDirectories = (directories: Directory[]) => {
+  return [...directories].sort((a, b) => {
+    // 폴더를 먼저 보여주기 위해 type 비교
+    if (a.type === "folder" && b.type === "file") return -1;
+    if (a.type === "file" && b.type === "folder") return 1;
+    // 같은 타입일 경우 이름으로 정렬
+    return a.name.localeCompare(b.name);
+  });
+};
+
 const renderNode = (directory: Directory, currentPath: string) => {
   if (directory.type === "folder") {
     const isOpened =
       directory.name === "root" || currentPath.includes(directory.path);
+
+    // 폴더 내부의 항목들도 정렬
+    const sortedSubDirectories = sortDirectories(directory.subDirectories);
+
     return (
       <Node key={directory.name} directory={directory} isOpened={isOpened}>
         <div className="ml-4 border-l-2 border-sub-200">
-          {directory.subDirectories.map((directory) =>
+          {sortedSubDirectories.map((directory) =>
             renderNode(directory, currentPath)
           )}
         </div>

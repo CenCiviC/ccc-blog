@@ -12,7 +12,7 @@ export default async function DotLayout({
   params: Promise<{ md: string[] }>;
 }>) {
   const mdTitles = await getMarkdownTitles();
-  const fileSystem = buildFileSystem(mdTitles);
+  const fileSystem = buildFileSystem(mdTitles.sort());
 
   const slug = (await params).md;
   const filePath = decodeURIComponent(slug.join("/"));
