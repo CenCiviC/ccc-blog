@@ -1,5 +1,6 @@
 import { getMarkdownTitles } from "@/api/aws-s3";
 import SideBar from "@/components/sidebar";
+import TopBar from "@/components/topbar";
 import { Folder } from "@/lib/types";
 import React from "react";
 
@@ -17,11 +18,14 @@ export default async function DotLayout({
   const filePath = decodeURIComponent(slug.join("/"));
 
   return (
-    <div className="flex flex-1 w-full h-full">
-      <SideBar directory={fileSystem} currentPath={filePath} />
+    <>
+      <TopBar />
+      <div className="flex flex-1 w-full h-full">
+        <SideBar directory={fileSystem} currentPath={filePath} />
 
-      {children}
-    </div>
+        {children}
+      </div>
+    </>
   );
 }
 function buildFileSystem(markdownTitles: Array<string>): Folder {

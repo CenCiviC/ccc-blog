@@ -28,7 +28,7 @@ export async function generateStaticParams() {
     // 실제 데이터
     await addDocuments(documents);
   } catch (error) {
-    console.log(error);
+    console.error(error);
   }
 
   return titles.map((title) => ({
@@ -48,12 +48,12 @@ export default async function DotPage({ params }: DotPageProps) {
 
   return (
     <div className="flex bg-primary-50 w-full h-full min-h-[var(--sidebar-height)] p-[var(--padding)]">
-      <div className="flex w-[75%] h-full px-8">
+      <div className="flex w-full lg:w-[80%] h-full px-4 lg:px-8">
         <div className="flex flex-col w-full max-w-[820px] mx-auto">
           <Post name={fileName} fileData={fileData} />
         </div>
       </div>
-      <div className="sticky top-[var(--toc-top)] w-[25%] h-full p-8">
+      <div className="hidden lg:block sticky top-[var(--toc-top)] w-[20%] h-full p-8">
         <Toc markdownData={fileData} currentPath={filePath} />
       </div>
     </div>

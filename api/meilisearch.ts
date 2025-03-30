@@ -12,7 +12,6 @@ export async function addDocuments(
 ) {
   try {
     await client.index(INDEX_NAME).addDocuments(datas);
-    console.log("Documents added successfully");
   } catch (error) {
     console.error("Error adding documents:", error);
   }

@@ -1,33 +1,42 @@
+"use client";
 import Image from "next/image";
 import Link from "next/link";
 import { DotsSvg, MenuSvg, QuestionMarkSvg } from "./icons";
 import SearchBar from "./searchbar";
+import { useSidebarStore } from "@/lib/store/sidebarStore";
 
-export default function TopBar() {
+export default function TopBar({
+  hasMenuBtn = true,
+}: {
+  hasMenuBtn?: boolean;
+}) {
+  const toggleSidebar = useSidebarStore((state) => state.toggleSidebar);
+
   return (
     <nav className="flex sticky z-50 top-0 left-0 items-center justify-between shrink-0 w-full h-[var(--topbar-height)] px-[30px] bg-primary-300 font-semibold border-b-2 border-sub-300">
       <div className="flex items-center gap-2">
-        {/* mobile side button */}
-        <button className="lg:hidden">
-          <MenuSvg />
-        </button>
+        {hasMenuBtn && (
+          <button onClick={toggleSidebar}>
+            <MenuSvg />
+          </button>
+        )}
 
         <Link
           href={"/dot/programming/docker/Docker%20관련%20명령어.md"}
-          className="hidden lg:block hover:text-primary-900 group"
+          className="block hover:text-primary-900 group"
         >
           <div className="flex items-center rounded-md hover:bg-primary-500 px-2 py-1 gap-1.5">
             <QuestionMarkSvg color="var(--text-color)" />
-            <span className="text-text">Who am i?</span>
+            <span className="text-text lg:block hidden">About me</span>
           </div>
         </Link>
         <Link
           href={"/dot/programming/docker/Docker%20관련%20명령어.md"}
-          className="hidden lg:block hover:text-primary-900 group"
+          className="block hover:text-primary-900 group"
         >
           <div className="flex items-center rounded-md hover:bg-primary-500 px-2 py-1 gap-1.5">
             <DotsSvg color="var(--text-color)" />
-            <span className="text-text">Dots</span>
+            <span className="text-text lg:block hidden">Dots</span>
           </div>
         </Link>
       </div>

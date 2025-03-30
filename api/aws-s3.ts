@@ -47,7 +47,6 @@ export async function getMarkdownTitles(
       const response = await s3Client.send(command);
 
       if (!response.Contents) {
-        console.log(`No files found in folder: ${folderPath}`);
         continue;
       }
 

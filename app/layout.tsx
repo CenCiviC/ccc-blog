@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "@/style/globals.css";
-import TopBar from "@/components/topbar";
 
 const pretendard = localFont({
   src: "../public/fonts/PretendardVariable.woff2",
@@ -23,10 +22,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${pretendard.className}`}>
-        <main className="flex flex-col">
-          <TopBar />
-          {children}
-        </main>
+        <main className="flex flex-col">{children}</main>
       </body>
     </html>
   );

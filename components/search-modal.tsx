@@ -21,7 +21,7 @@ export default function SearchModal({
     const searchQuery = event.target.value;
     const results = await searchDocuments(searchQuery);
     setSearchResults(results.hits as SearchResult[]);
-    console.log(results.hits as SearchResult[]);
+    //console.log(results.hits as SearchResult[]);
   }
 
   return (
