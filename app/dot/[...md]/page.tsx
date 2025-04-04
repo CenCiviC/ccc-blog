@@ -8,12 +8,9 @@ import Toc from "./toc";
 import { marked } from "marked";
 import hljs from "highlight.js";
 import { addDocuments } from "@/api/meilisearch";
+
 interface PageParams {
   md: string[];
-}
-
-interface DotPageProps {
-  params: Promise<PageParams>;
 }
 
 export const revalidate = 60;
@@ -25,6 +22,7 @@ export async function generateStaticParams() {
   const documents = await getAllMarkdownDatas();
   try {
     // 실제 데이터
+    //TODO: meilisearch에 데이터를 지우고 새롭게 해야될 듯
     await addDocuments(documents);
   } catch (error) {
     console.error(error);
@@ -32,10 +30,14 @@ export async function generateStaticParams() {
 
   return titles.map((title) => ({
     md: String(title).split("/"),
-  }));
+  })) satisfies PageParams[];
 }
 
-export default async function DotPage({ params }: DotPageProps) {
+export default async function DotPage({
+  params,
+}: {
+  params: Promise<PageParams>;
+}) {
   const slug = (await params).md;
   const filePath = decodeURIComponent(slug.join("/"));
   const fileData = await getMarkdownContent(filePath);

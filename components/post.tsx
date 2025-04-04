@@ -10,7 +10,7 @@ interface PostProps {
   fileData: MDData;
 }
 
-const Post = async ({ name, fileData }: PostProps) => {
+const Post = ({ name, fileData }: PostProps) => {
   const processedContent = fileData.content;
 
   return (
