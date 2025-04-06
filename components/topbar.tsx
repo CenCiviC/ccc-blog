@@ -52,7 +52,7 @@ export default function TopBar({
           className="object-contain group-hover:hidden"
         />
         <Image
-          src="/img/logo.png"
+          src="/img/logo-color.png"
           alt="logo"
           width={48}
           height={40}

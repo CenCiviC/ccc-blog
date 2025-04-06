@@ -7,7 +7,7 @@ import Post from "@/components/post";
 import Toc from "./toc";
 import { marked } from "marked";
 import hljs from "highlight.js";
-import { addDocuments } from "@/api/meilisearch";
+import { addDocuments, deleteAllDocuments } from "@/api/meilisearch";
 
 interface PageParams {
   md: string[];
@@ -21,8 +21,7 @@ export async function generateStaticParams() {
   const titles = await getMarkdownTitles();
   const documents = await getAllMarkdownDatas();
   try {
-    // 실제 데이터
-    //TODO: meilisearch에 데이터를 지우고 새롭게 해야될 듯
+    await deleteAllDocuments();
     await addDocuments(documents);
   } catch (error) {
     console.error(error);
