@@ -45,14 +45,14 @@ export default function TopBar({
         className="absolute left-1/2 -translate-x-1/2 flex items-center gap-1.5 group"
       >
         <Image
-          src="https://dengtukgi5sf7.cloudfront.net/attachment/logo-black.png"
+          src="/img/black.png"
           alt="logo"
           width={48}
           height={40}
           className="object-contain group-hover:hidden"
         />
         <Image
-          src="https://dengtukgi5sf7.cloudfront.net/attachment/logo-color.png"
+          src="/img/color.png"
           alt="logo"
           width={48}
           height={40}
