@@ -33,7 +33,6 @@ export async function searchDocuments(searchQuery: string) {
 export async function deleteAllDocuments() {
   try {
     await client.index(INDEX_NAME).deleteAllDocuments();
-    console.log("All documents deleted successfully from index:", INDEX_NAME);
     return { success: true };
   } catch (error) {
     console.error("Error deleting documents:", error);

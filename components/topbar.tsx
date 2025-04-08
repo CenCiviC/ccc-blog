@@ -31,7 +31,7 @@ export default function TopBar({
           </div>
         </Link>
         <Link
-          href={"/dot/kyungbin/22.02.24%20kyungbin%20logo.md"}
+          href={"/dot/kyungbin/23.02.24%20kyungbin%20logo.md"}
           className="block hover:text-primary-900 group"
         >
           <div className="flex items-center rounded-md hover:bg-primary-500 px-2 py-1 gap-1.5">
@@ -45,14 +45,14 @@ export default function TopBar({
         className="absolute left-1/2 -translate-x-1/2 flex items-center gap-1.5 group"
       >
         <Image
-          src="public/img/logo-black.png"
+          src="/img/logo-black.png"
           alt="logo"
           width={48}
           height={40}
           className="object-contain group-hover:hidden"
         />
         <Image
-          src="public/img/logo-color.png"
+          src="/img/logo-color.png"
           alt="logo"
           width={48}
           height={40}
