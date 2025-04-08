@@ -67,9 +67,11 @@ const convertMarkdownToHtml = async (content: string): Promise<string> => {
   renderer.image = ({ href, title, text }) => {
     const baseUrl = `${process.env.CCC_CDN_IMAGE_DOMAIN}`;
     const imageUrl = `${baseUrl}/${href}`;
-    return `<img src="${imageUrl}" alt="${text}"${
+    return `<div class="flex justify-center">
+      <img src="${imageUrl}" alt="${text}"${
       title ? ` title="${title}"` : ""
-    }>`;
+    } class="my-3">
+    </div>`;
   };
 
   // Customize link rendering to use absolute paths
