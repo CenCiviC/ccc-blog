@@ -12,7 +12,11 @@ export default async function DotLayout({
   params: Promise<{ md: string[] }>;
 }>) {
   const mdTitles = await getMarkdownTitles();
-  const fileSystem = buildFileSystem(mdTitles.sort());
+  const fileSystem = buildFileSystem(
+    mdTitles.sort((a, b) => a.localeCompare(b, "en", { sensitivity: "base" }))
+  );
+
+  sortFileSystem(fileSystem);
 
   const slug = (await params).md;
   const filePath = decodeURIComponent(slug.join("/"));
@@ -74,4 +78,18 @@ function buildFileSystem(markdownTitles: Array<string>): Folder {
   });
 
   return root;
+}
+
+function sortFileSystem(node: Folder) {
+  node.subDirectories.sort((a, b) => {
+    if (a.type === "folder" && b.type === "file") return -1;
+    if (a.type === "file" && b.type === "folder") return 1;
+    return a.name.localeCompare(b.name, "en", { sensitivity: "base" });
+  });
+
+  for (const sub of node.subDirectories) {
+    if (sub.type === "folder") {
+      sortFileSystem(sub); // 재귀적으로 폴더 안도 정렬
+    }
+  }
 }

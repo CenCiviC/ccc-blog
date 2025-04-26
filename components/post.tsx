@@ -12,7 +12,6 @@ interface PostProps {
 
 const Post = ({ name, fileData }: PostProps) => {
   const processedContent = fileData.content;
-
   return (
     <>
       <div className="bg-background">
