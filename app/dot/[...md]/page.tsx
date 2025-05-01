@@ -15,7 +15,7 @@ interface PageParams {
 
 export const revalidate = 60;
 
-export const dynamicParams = true; // or false, to 404 on unknown paths
+export const dynamicParams = true;
 
 export async function generateStaticParams() {
   const titles = await getMarkdownTitles();
@@ -29,7 +29,7 @@ export async function generateStaticParams() {
 
   return titles.map((title) => ({
     md: String(title).split("/"),
-  })) satisfies PageParams[];
+  }));
 }
 
 export default async function DotPage({
@@ -117,6 +117,10 @@ const convertMarkdownToHtml = async (content: string): Promise<string> => {
 
   // TODO: 코드 블럭 처리
   renderer.code = ({ lang, text }) => {
+    const highlighted = lang
+      ? hljs.highlight(text, { language: lang.toLowerCase() }).value
+      : hljs.highlightAuto(text).value;
+
     return `
     <div class="relative my-4">
       <div class="flex justify-between items-center px-3 h-[30px] bg-[#1e1e1e] rounded-t-md">
@@ -129,12 +133,12 @@ const convertMarkdownToHtml = async (content: string): Promise<string> => {
         class="text-[#6f9572] text-sm font-semibold px-2 py-1"
         data-content="${encodeURIComponent(content.trim())}"
         >
-        ${lang?.toUpperCase()}
+         ${lang ? lang.toUpperCase() : "CODE"}
         </span>
       </div>
-      <pre><code class="language-${lang} hljs">${
-      hljs.highlightAuto(text).value
-    }</code></pre>
+      <pre><code class="language-${
+        lang || "plaintext"
+      } hljs">${highlighted}</code></pre>
     </div>`;
   };
 
