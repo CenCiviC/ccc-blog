@@ -115,7 +115,7 @@ const convertMarkdownToHtml = async (content: string): Promise<string> => {
     return `<h${depth}>${tokens[0].raw}</h${depth}>`;
   };
 
-  // TODO: 코드 블럭 처리
+  // Customize code rendering
   renderer.code = ({ lang, text }) => {
     const highlighted = lang
       ? hljs.highlight(text, { language: lang.toLowerCase() }).value

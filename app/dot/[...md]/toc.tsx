@@ -12,7 +12,6 @@ interface TocProps {
 export default function Toc({ markdownData, currentPath }: TocProps) {
   const [activeId, setActiveId] = useState<string>("");
 
-  // Extract h2 headings from HTML content - Move this outside of component render
   const h2Headings = extractHeadings(markdownData.content);
 
   useEffect(() => {
@@ -56,7 +55,7 @@ export default function Toc({ markdownData, currentPath }: TocProps) {
   );
 }
 
-// Helper function - Move this outside of the component
+// toc 생성을 위한 h2 추출함수
 function extractHeadings(content: string) {
   const h2Headings: { text: string; href: string }[] = [];
   const regex = /<h2[^>]*id="([^"]*)"[^>]*>(.*?)<\/h2>/g;
