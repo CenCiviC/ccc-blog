@@ -142,6 +142,7 @@ const convertMarkdownToHtml = async (content: string): Promise<string> => {
     </div>`;
   };
 
+  marked.setOptions({ gfm: true, breaks: true });
   marked.use({ renderer });
   return marked(content);
 };
