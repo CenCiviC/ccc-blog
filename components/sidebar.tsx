@@ -3,7 +3,8 @@
 import Node from "./node";
 import { Directory } from "@/lib/types";
 import { useSidebarStore } from "@/lib/store/sidebarStore";
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
+
 interface SideBarProps {
   directory: Directory;
   currentPath: string;
@@ -15,7 +16,9 @@ const sortDirectories = (directories: Directory[]) => {
     if (a.type === "folder" && b.type === "file") return -1;
     if (a.type === "file" && b.type === "folder") return 1;
     // 같은 타입일 경우 이름으로 정렬
-    return a.name.localeCompare(b.name);
+    return a.name.localeCompare(b.name, ["ko", "en"], {
+      sensitivity: "variant",
+    });
   });
 };
 
@@ -50,11 +53,8 @@ const renderNode = (directory: Directory, currentPath: string) => {
 export default function SideBar({ directory, currentPath }: SideBarProps) {
   const isOpen = useSidebarStore((state) => state.isOpen);
   const setIsOpen = useSidebarStore((state) => state.setIsOpen);
-  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    setMounted(true);
-
     const handleResize = () => {
       const shouldBeOpen = window.innerWidth >= 1024;
       setIsOpen(shouldBeOpen);
@@ -70,10 +70,6 @@ export default function SideBar({ directory, currentPath }: SideBarProps) {
       window.removeEventListener("resize", handleResize);
     };
   }, [setIsOpen]);
-
-  if (!mounted) {
-    return null;
-  }
 
   return (
     <aside

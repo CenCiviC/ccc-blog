@@ -1,4 +1,4 @@
-import { getMarkdownTitles } from "@/api/aws-s3";
+import { getMarkdownTitles } from "@/services/aws-s3";
 import SideBar from "@/components/sidebar";
 import TopBar from "@/components/topbar";
 import { Folder } from "@/lib/types";

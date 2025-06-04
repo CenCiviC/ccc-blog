@@ -2,12 +2,12 @@ import {
   getMarkdownContent,
   getMarkdownTitles,
   getAllMarkdownDatas,
-} from "@/api/aws-s3";
+} from "@/services/aws-s3";
 import Post from "@/components/post";
 import Toc from "./toc";
 import { marked } from "marked";
 import hljs from "highlight.js";
-import { addDocuments, deleteAllDocuments } from "@/api/meilisearch";
+import { addDocuments, deleteAllDocuments } from "@/services/meilisearch";
 
 interface PageParams {
   md: string[];

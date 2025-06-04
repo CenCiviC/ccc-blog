@@ -1,5 +1,5 @@
 import type { MetadataRoute } from "next";
-import { getMarkdownTitles } from "@/api/aws-s3";
+import { getMarkdownTitles } from "@/services/aws-s3";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // 비동기로 데이터 가져오기

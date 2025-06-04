@@ -1,6 +1,6 @@
 "use client";
 
-import { searchDocuments } from "@/api/meilisearch";
+import { searchDocuments } from "@/services/meilisearch";
 import { FileSvg, MagnifyingGlassSvg } from "./icons";
 import { useState } from "react";
 import Link from "next/link";
