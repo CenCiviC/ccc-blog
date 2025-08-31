@@ -1,6 +1,4 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
 :root {
   box-sizing: border-box;
@@ -34,6 +32,31 @@
   --sidebar-height: calc(100dvh - var(--topbar-height));
   --padding: 30px;
   --toc-top: calc(var(--topbar-height) + var(--padding));
+}
+
+@theme {
+  --color-codeblock: var(--codeblock-color);
+  --color-text: var(--text-color);
+  --color-h1: var(--h1-color);
+  --color-h2: var(--h2-color);
+  --color-h3: var(--h3-color);
+  --color-h4: var(--h4-color);
+  --color-h5: var(--h5-color);
+  --color-p: var(--p-color);
+  --color-link: var(--link-color);
+  --color-internal: var(--internal-color);
+
+  --color-primary-50: var(--primary-50);
+  --color-primary-100: var(--primary-100);
+  --color-primary-200: var(--primary-200);
+  --color-primary-300: var(--primary-300);
+  --color-primary-400: var(--primary-400);
+  --color-primary-500: var(--primary-500);
+  --color-primary-900: var(--primary-900);
+  --color-sub-100: var(--sub-100);
+  --color-sub-200: var(--sub-200);
+  --color-sub-300: var(--sub-300);
+  --color-sub-500: var(--sub-500);
 }
 
 * {
