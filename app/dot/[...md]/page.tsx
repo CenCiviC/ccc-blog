@@ -1,13 +1,16 @@
+import hljs from "highlight.js";
+import { marked } from "marked";
+
+import Post from "@/components/post";
+
 import {
+  getAllMarkdownDatas,
   getMarkdownContent,
   getMarkdownTitles,
-  getAllMarkdownDatas,
 } from "@/services/aws-s3";
-import Post from "@/components/post";
-import Toc from "./toc";
-import { marked } from "marked";
-import hljs from "highlight.js";
 import { addDocuments, deleteAllDocuments } from "@/services/meilisearch";
+
+import Toc from "./toc";
 
 interface PageParams {
   md: string[];
@@ -27,7 +30,7 @@ export async function generateStaticParams() {
     console.error(error);
   }
 
-  return titles.map((title) => ({
+  return titles.map(title => ({
     md: String(title).split("/"),
   }));
 }
@@ -69,8 +72,8 @@ const convertMarkdownToHtml = async (content: string): Promise<string> => {
     const imageUrl = `${baseUrl}/${href}`;
     return `<div class="flex justify-center">
       <img src="${imageUrl}" alt="${text}"${
-      title ? ` title="${title}"` : ""
-    } class="my-3">
+        title ? ` title="${title}"` : ""
+      } class="my-3">
     </div>`;
   };
 

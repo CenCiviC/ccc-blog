@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
+
 import { MagnifyingGlassSvg } from "./icons";
 import SearchModal from "./search-modal";
 
@@ -21,7 +22,8 @@ export default function SearchBar() {
 
   return (
     <>
-      <div
+      <button
+        type="button"
         onClick={() => setIsOpen(true)}
         className="flex w-fit h-fit items-center gap-2 px-2.5 py-1.5 bg-primary-50 rounded-full group border-2 border-transparent hover:border-primary-900 cursor-pointer"
       >
@@ -39,7 +41,7 @@ export default function SearchBar() {
             <span className="text-text text-xs font-medium">K</span>
           </kbd>
         </div>
-      </div>
+      </button>
 
       {isOpen && <SearchModal setIsOpen={setIsOpen} />}
     </>

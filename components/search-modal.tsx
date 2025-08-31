@@ -1,10 +1,12 @@
 "use client";
 
-import { searchDocuments } from "@/services/meilisearch";
-import { FileSvg, MagnifyingGlassSvg } from "./icons";
-import { useState } from "react";
 import Link from "next/link";
-import { MDData } from "@/lib/types";
+import { useState } from "react";
+
+import type { MDData } from "@/lib/types";
+import { searchDocuments } from "@/services/meilisearch";
+
+import { FileSvg, MagnifyingGlassSvg } from "./icons";
 
 interface SearchResult extends MDData {
   _formatted: MDData;
@@ -31,7 +33,7 @@ export default function SearchModal({
     >
       <div
         className="flex flex-col m-auto gap-10 mt-[120px] w-[600px] min-h-[200px] max-h-[600px] bg-sub-100 rounded-lg p-5 overflow-y-scroll"
-        onClick={(e) => e.stopPropagation()}
+        onClick={e => e.stopPropagation()}
       >
         <form className="flex items-center gap-2.5 w-full h-[60px] px-[18px] bg-primary-50 border-2 border-sub-300 rounded-lg focus-within:border-primary-900">
           <MagnifyingGlassSvg size={28} color="var(--text-color)" />
@@ -47,7 +49,7 @@ export default function SearchModal({
 
         <div className="flex flex-col gap-2.5">
           {searchResults.length > 0 ? (
-            searchResults.map((result) => (
+            searchResults.map(result => (
               <SearchResultItem
                 key={result.id}
                 setIsOpen={setIsOpen}

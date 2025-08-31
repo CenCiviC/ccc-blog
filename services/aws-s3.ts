@@ -52,7 +52,7 @@ export async function getMarkdownTitles(
 
       // .md 파일만 필터링하고 등록된 날짜순 (LastModified)으로 정렬
       const sortedFilesByDate = response.Contents.filter(
-        (object) => object.Key && object.Key.endsWith(".md")
+        object => object.Key && object.Key.endsWith(".md")
       ).sort((a, b) => {
         if (a.LastModified && b.LastModified) {
           return a.LastModified.getTime() - b.LastModified.getTime(); // 등록된 날짜순 정렬
@@ -118,7 +118,7 @@ export async function getMarkdownContent(
 export async function getAllMarkdownDatas(): Promise<Array<MDData>> {
   const mdTitles = await getMarkdownTitles();
   const mdDatas = await Promise.all(
-    mdTitles.map(async (title) => {
+    mdTitles.map(async title => {
       return await getMarkdownContent(title);
     })
   );

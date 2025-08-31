@@ -1,9 +1,11 @@
 "use client";
 
-import Node from "./node";
-import { Directory } from "@/lib/types";
-import { useSidebarStore } from "@/lib/store/sidebarStore";
 import { useEffect } from "react";
+
+import { useSidebarStore } from "@/lib/store/sidebarStore";
+import type { Directory } from "@/lib/types";
+
+import Node from "./node";
 
 interface SideBarProps {
   directory: Directory;
@@ -33,7 +35,7 @@ const renderNode = (directory: Directory, currentPath: string) => {
     return (
       <Node key={directory.name} directory={directory} isOpened={isOpened}>
         <div className="ml-4 border-l-2 border-sub-200">
-          {sortedSubDirectories.map((directory) =>
+          {sortedSubDirectories.map(directory =>
             renderNode(directory, currentPath)
           )}
         </div>
@@ -51,8 +53,8 @@ const renderNode = (directory: Directory, currentPath: string) => {
 };
 
 export default function SideBar({ directory, currentPath }: SideBarProps) {
-  const isOpen = useSidebarStore((state) => state.isOpen);
-  const setIsOpen = useSidebarStore((state) => state.setIsOpen);
+  const isOpen = useSidebarStore(state => state.isOpen);
+  const setIsOpen = useSidebarStore(state => state.setIsOpen);
 
   useEffect(() => {
     const handleResize = () => {

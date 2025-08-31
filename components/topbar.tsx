@@ -1,22 +1,24 @@
 "use client";
 import Image from "next/image";
 import Link from "next/link";
+
+import { useSidebarStore } from "@/lib/store/sidebarStore";
+
 import { DotsSvg, MenuSvg, QuestionMarkSvg } from "./icons";
 import SearchBar from "./searchbar";
-import { useSidebarStore } from "@/lib/store/sidebarStore";
 
 export default function TopBar({
   hasMenuBtn = true,
 }: {
   hasMenuBtn?: boolean;
 }) {
-  const toggleSidebar = useSidebarStore((state) => state.toggleSidebar);
+  const toggleSidebar = useSidebarStore(state => state.toggleSidebar);
 
   return (
     <nav className="flex sticky z-50 top-0 left-0 items-center justify-between shrink-0 w-full h-[var(--topbar-height)] px-[30px] bg-primary-300 font-semibold border-b-2 border-sub-300">
       <div className="flex items-center gap-2">
         {hasMenuBtn && (
-          <button onClick={toggleSidebar}>
+          <button type="button" onClick={toggleSidebar}>
             <MenuSvg />
           </button>
         )}

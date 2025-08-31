@@ -1,8 +1,9 @@
 "use client";
 
-import Anchor from "@/components/anchor";
-import { MDData } from "@/lib/types";
 import { useEffect, useState } from "react";
+
+import Anchor from "@/components/anchor";
+import type { MDData } from "@/lib/types";
 
 interface TocProps {
   markdownData: MDData;
@@ -16,7 +17,7 @@ export default function Toc({ markdownData, currentPath }: TocProps) {
 
   useEffect(() => {
     const callback = (entries: IntersectionObserverEntry[]) => {
-      const visibleHeadings = entries.filter((entry) => entry.isIntersecting);
+      const visibleHeadings = entries.filter(entry => entry.isIntersecting);
 
       if (visibleHeadings.length > 0) {
         const topMostHeading = visibleHeadings.reduce((prev, current) => {
@@ -36,16 +37,16 @@ export default function Toc({ markdownData, currentPath }: TocProps) {
       threshold: [0, 1],
     });
 
-    document.querySelectorAll("h2").forEach((h2) => observer.observe(h2));
+    document.querySelectorAll("h2").forEach(h2 => observer.observe(h2));
 
     return () => observer.disconnect();
   }, []);
 
   return (
     <div className="w-full h-max ">
-      {h2Headings.map((heading, index) => (
+      {h2Headings.map(heading => (
         <Anchor
-          key={index}
+          key={heading.href}
           isActive={heading.href === activeId}
           text={heading.text}
           href={`/dot/${currentPath}#${heading.href}`}

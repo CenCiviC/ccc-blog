@@ -1,5 +1,6 @@
-import TopBar from "@/components/topbar";
 import Image from "next/image";
+
+import TopBar from "@/components/topbar";
 
 export default function Home() {
   return (

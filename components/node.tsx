@@ -1,9 +1,13 @@
 "use client";
-import { useState } from "react";
+
 import cn from "classnames";
+
 import Link from "next/link";
+import { useState } from "react";
+
+import type { Directory } from "@/lib/types";
+
 import { FileSvg, FolderSvg } from "./icons";
-import { Directory } from "@/lib/types";
 
 interface NodeProps {
   directory: Directory;
@@ -53,6 +57,7 @@ export default function Node({
   return (
     <div>
       <button
+        type="button"
         style={{ paddingLeft: leftPadding }}
         className={containrClass}
         onClick={handleToggle}

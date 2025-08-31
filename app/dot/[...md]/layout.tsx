@@ -1,8 +1,9 @@
-import { getMarkdownTitles } from "@/services/aws-s3";
+import type React from "react";
+
 import SideBar from "@/components/sidebar";
 import TopBar from "@/components/topbar";
-import { Folder } from "@/lib/types";
-import React from "react";
+import type { Folder } from "@/lib/types";
+import { getMarkdownTitles } from "@/services/aws-s3";
 
 export default async function DotLayout({
   children,
@@ -48,7 +49,7 @@ function buildFileSystem(markdownTitles: Array<string>): Folder {
 
     const folderName = pathSegments[0];
     let folder = currentNode.subDirectories.find(
-      (child) => child.type === "folder" && child.name === folderName
+      child => child.type === "folder" && child.name === folderName
     ) as Folder;
 
     if (!folder) {
@@ -64,7 +65,7 @@ function buildFileSystem(markdownTitles: Array<string>): Folder {
     return findOrCreateFolder(pathSegments.slice(1), folder);
   }
 
-  markdownTitles.map((filePath) => {
+  markdownTitles.map(filePath => {
     const pathSegments = filePath.split("/");
     const fileNameWithExtension = pathSegments.pop(); // Extract file name
     const fileName = fileNameWithExtension?.replace(/\.md$/, "") || ""; // Remove .md extension

@@ -12,10 +12,10 @@ const getInitialState = () => {
   return window.innerWidth >= 1024; // 클라이언트에서는 화면 크기에 따라 결정
 };
 
-export const useSidebarStore = create<SidebarState>((set) => ({
+export const useSidebarStore = create<SidebarState>(set => ({
   isOpen: getInitialState(),
   toggleSidebar: () =>
-    set((state) => {
+    set(state => {
       const newIsOpen = !state.isOpen;
       // 모바일에서만 body overflow 처리
       if (typeof window !== "undefined" && window.innerWidth < 1024) {
@@ -23,7 +23,7 @@ export const useSidebarStore = create<SidebarState>((set) => ({
       }
       return { isOpen: newIsOpen };
     }),
-  setIsOpen: (isOpen) => {
+  setIsOpen: isOpen => {
     // 모바일에서만 body overflow 처리
     if (typeof window !== "undefined" && window.innerWidth < 1024) {
       document.body.style.overflow = isOpen ? "hidden" : "";

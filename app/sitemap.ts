@@ -1,4 +1,5 @@
 import type { MetadataRoute } from "next";
+
 import { getMarkdownTitles } from "@/services/aws-s3";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
@@ -6,7 +7,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const titles = await getMarkdownTitles();
 
   // 가져온 데이터 기반으로 사이트맵 생성
-  const postUrls = titles.map((title) => ({
+  const postUrls = titles.map(title => ({
     url: `https://kyungbin.im/dot/${title}`,
     lastModified: new Date(), // 각 포스트의 수정 날짜
     changeFrequency: "hourly" as const,
