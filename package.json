@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "build:measure": "tsx scripts/measure-build-time.ts",
     "start": "next start",
     "lint": "next lint",
     "lint:fix": "next lint --fix && prettier --write .",
@@ -38,6 +39,7 @@
     "eslint-plugin-prettier": "^5.5.4",
     "postcss": "^8.5.6",
     "prettier": "^3.6.2",
+    "tsx": "^4.20.5",
     "typescript": "^5.9.2"
   }
 }
