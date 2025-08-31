@@ -14,6 +14,7 @@ export default function Anchor({ text, href, isActive }: AnchorProps) {
     { "text-primary-900": isActive },
     { "text-text": !isActive }
   );
+
   return (
     <Link
       href={href}
