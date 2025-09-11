@@ -1,0 +1,62 @@
+name: Linting
+
+on:
+  push:
+    branches:
+      - main
+      - master
+    paths:
+      - "app/**"
+      - "components/**"
+      - "lib/**"
+      - "services/**"
+      - "scripts/**"
+      - "style/**"
+      - "**/*.ts"
+      - "**/*.tsx"
+      - "package.json"
+      - "pnpm-lock.yaml"
+      - ".eslintrc.json"
+      - "tsconfig.json"
+  pull_request:
+    paths:
+      - "app/**"
+      - "components/**"
+      - "lib/**"
+      - "services/**"
+      - "scripts/**"
+      - "style/**"
+      - "**/*.ts"
+      - "**/*.tsx"
+      - "package.json"
+      - "pnpm-lock.yaml"
+      - ".eslintrc.json"
+      - "tsconfig.json"
+
+concurrency:
+  group: ${{github.workflow}}-${{github.ref}}
+  cancel-in-progress: true
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Setup PNPM
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: "pnpm"
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      - name: ESLint
+        run: pnpm lint
+      - name: Prettier (check)
+        run: pnpm format:check
+      - name: Type check
+        run: pnpm exec tsc --noEmit
