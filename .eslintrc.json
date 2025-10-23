@@ -9,5 +9,13 @@
     "import/order": "off",
     "import/no-unresolved": "off",
     "import/no-duplicates": "error"
-  }
+  },
+  "overrides": [
+    {
+      "files": ["scripts/**/*"],
+      "rules": {
+        "no-console": "off"
+      }
+    }
+  ]
 }
