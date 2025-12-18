@@ -120,9 +120,15 @@ const convertMarkdownToHtml = async (content: string): Promise<string> => {
 
   // Customize code rendering
   renderer.code = ({ lang, text }) => {
-    const highlighted = lang
-      ? hljs.highlight(text, { language: lang.toLowerCase() }).value
-      : hljs.highlightAuto(text).value;
+    let highlighted = "";
+    try {
+      highlighted = lang
+        ? hljs.highlight(text, { language: lang.toLowerCase() }).value
+        : hljs.highlightAuto(text).value;
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error(`Error highlighting code: ${lang}`, error);
+    }
 
     return `
     <div class="relative my-4">
