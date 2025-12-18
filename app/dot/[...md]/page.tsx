@@ -27,6 +27,7 @@ export async function generateStaticParams() {
     await deleteAllDocuments();
     await addDocuments(documents);
   } catch (error) {
+    // eslint-disable-next-line no-console
     console.error(error);
   }
 

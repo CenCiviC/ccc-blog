@@ -1,3 +1,4 @@
+// TODO: meilisearch 라이브러리 삭제 후 직접 새로 구현 필요
 import { MeiliSearch } from "meilisearch";
 
 const INDEX_NAME = "markdown-file";
