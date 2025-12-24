@@ -68,7 +68,11 @@ const convertMarkdownToHtml = async (content: string): Promise<string> => {
   // Customize image rendering
   renderer.image = ({ href, title, text }) => {
     const baseUrl = `${process.env.CCC_CDN_IMAGE_DOMAIN}`;
-    const imageUrl = `${baseUrl}/${href}`;
+    // href가 "attachment"로 시작하면 제거
+    const processedHref = href?.startsWith("attachment/")
+      ? href.replace(/^attachment\//, "")
+      : href;
+    const imageUrl = `${baseUrl}/${processedHref}`;
     return `<div class="flex justify-center">
       <img src="${imageUrl}" alt="${text}"${
         title ? ` title="${title}"` : ""
