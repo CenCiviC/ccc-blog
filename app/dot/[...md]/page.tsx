@@ -72,9 +72,35 @@ const convertMarkdownToHtml = async (content: string): Promise<string> => {
     const processedHref = href?.startsWith("attachment/")
       ? href.replace(/^attachment\//, "")
       : href;
-    const imageUrl = `${baseUrl}/${processedHref}`;
+    const mediaUrl = `${baseUrl}/${processedHref}`;
+
+    // 비디오 확장자 확인
+    // NOTE: 비디오가 적혀도 marked에서 image로 처리됨
+    const videoExtensions = [
+      ".mov",
+      ".mp4",
+      ".webm",
+      ".ogg",
+      ".ogv",
+      ".avi",
+      ".mkv",
+    ];
+    const isVideo =
+      processedHref &&
+      videoExtensions.some(ext => processedHref.toLowerCase().endsWith(ext));
+
+    if (isVideo) {
+      return `<div class="flex justify-center my-3">
+        <video src="${mediaUrl}" controls${
+          title ? ` title="${title}"` : ""
+        } class="max-w-full h-auto">
+          Your browser does not support the video tag.
+        </video>
+      </div>`;
+    }
+
     return `<div class="flex justify-center">
-      <img src="${imageUrl}" alt="${text}"${
+      <img src="${mediaUrl}" alt="${text}"${
         title ? ` title="${title}"` : ""
       } class="my-3">
     </div>`;
