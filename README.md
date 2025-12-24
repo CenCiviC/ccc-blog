@@ -8,7 +8,7 @@ A personal blog built with Next.js that transforms Obsidian markdown notes into 
 
 - **Markdown-based**: Write posts in Obsidian and sync them to AWS S3
 - **Minimal workflow**: Markdown → S3 → Web rendering pipeline
-- **Search**: Full-text search powered by Meilisearch
+- **Search**: Full-text search powered by Meilisearch => manually
 - **Code highlighting**: Syntax highlighting for code blocks using highlight.js
 - **Table of contents**: Auto-generated TOC for better navigation
 
@@ -19,7 +19,7 @@ A personal blog built with Next.js that transforms Obsidian markdown notes into 
 - TypeScript
 - Tailwind CSS
 - AWS S3 (content storage)
-- Meilisearch (search engine) ->
+- Meilisearch (search engine) =>
 - Marked (markdown parser)
 
 ## TODO
