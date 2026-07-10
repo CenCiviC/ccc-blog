@@ -1,15 +1,27 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
-import type { MDData } from "@/lib/types";
-import { searchDocuments } from "@/services/meilisearch";
+import { searchDocuments } from "@/lib/search";
+import type { SearchDocument, SearchResult, Segment } from "@/lib/search";
 
 import { FileSvg, MagnifyingGlassSvg } from "./icons";
 
-interface SearchResult extends MDData {
-  _formatted: MDData;
+// 인덱스는 세션 동안 한 번만 받는다 (모달을 다시 열어도 재요청 없음)
+let indexPromise: Promise<SearchDocument[]> | null = null;
+
+function loadSearchIndex(): Promise<SearchDocument[]> {
+  if (!indexPromise) {
+    indexPromise = fetch("/api/search-index")
+      .then(response => response.json())
+      .then(data => data.documents as SearchDocument[])
+      .catch(error => {
+        indexPromise = null; // 실패 시 다음에 다시 시도
+        throw error;
+      });
+  }
+  return indexPromise;
 }
 
 export default function SearchModal({
@@ -18,12 +30,33 @@ export default function SearchModal({
   setIsOpen: (isOpen: boolean) => void;
 }) {
   const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
+  const documentsRef = useRef<SearchDocument[]>([]);
+  const queryRef = useRef("");
 
-  async function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
+  useEffect(() => {
+    let cancelled = false;
+    loadSearchIndex()
+      .then(documents => {
+        if (cancelled) return;
+        documentsRef.current = documents;
+        // 인덱스 로드 전에 입력된 검색어 반영
+        if (queryRef.current) {
+          setSearchResults(searchDocuments(documents, queryRef.current));
+        }
+      })
+      .catch(error => {
+        // eslint-disable-next-line no-console
+        console.error("Failed to load search index:", error);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
     const searchQuery = event.target.value;
-    const results = await searchDocuments(searchQuery);
-    setSearchResults(results.hits as SearchResult[]);
-    //console.log(results.hits as SearchResult[]);
+    queryRef.current = searchQuery;
+    setSearchResults(searchDocuments(documentsRef.current, searchQuery));
   }
 
   return (
@@ -66,6 +99,23 @@ export default function SearchModal({
     </div>
   );
 }
+
+function HighlightedText({ segments }: { segments: Segment[] }) {
+  return (
+    <>
+      {segments.map((segment, index) =>
+        segment.match ? (
+          <mark key={index} className="bg-primary-900 text-primary-50">
+            {segment.text}
+          </mark>
+        ) : (
+          <span key={index}>{segment.text}</span>
+        )
+      )}
+    </>
+  );
+}
+
 function SearchResultItem({
   result,
   setIsOpen,
@@ -91,25 +141,13 @@ function SearchResultItem({
           size={28}
           className="group-hover:hidden block"
         />
-        <div key={result.id} className="flex flex-col">
-          <span
-            dangerouslySetInnerHTML={{
-              __html: result._formatted.title.replace(
-                /<mark>/g,
-                '<mark class="bg-primary-900 text-primary-50">'
-              ),
-            }}
-            className="group-hover:text-primary-50 text-text text-base font-medium line-clamp-1"
-          ></span>
-          <span
-            dangerouslySetInnerHTML={{
-              __html: result._formatted.content.replace(
-                /<mark>/g,
-                '<mark class="bg-primary-900 text-primary-50">'
-              ),
-            }}
-            className="group-hover:text-primary-50 text-text text-xs line-clamp-1"
-          ></span>
+        <div className="flex flex-col">
+          <span className="group-hover:text-primary-50 text-text text-base font-medium line-clamp-1">
+            <HighlightedText segments={result.title} />
+          </span>
+          <span className="group-hover:text-primary-50 text-text text-xs line-clamp-1">
+            <HighlightedText segments={result.snippet} />
+          </span>
         </div>
       </div>
     </Link>
