@@ -1,24 +1,64 @@
 import { revalidatePath } from "next/cache";
 import { NextRequest, NextResponse } from "next/server";
 
-export async function POST(request: NextRequest) {
-  try {
-    // 특정 경로만 재생성하려면 body에서 경로를 받을 수 있습니다
-    const body = await request.json().catch(() => ({}));
-    const path = body.path;
+// S3 업로드 훅에서 호출하는 on-demand 재생성 엔드포인트.
+//
+// body: {
+//   path?: "programming/web/foo.md",       // S3 키. 없으면 전체 재생성
+//   event?: "update" | "create" | "delete" // 기본값 update
+// }
+//
+// - update: 해당 포스트 페이지만 무효화 (사이드바 구조는 그대로이므로)
+// - create/delete: 사이드바가 모든 페이지에 있으므로 /dot 전체 무효화
+// - 공통: 검색 인덱스와 sitemap 갱신, 무효화 직후 해당 페이지를 미리
+//   fetch해서 캐시를 데워둔다 (첫 방문자도 정적 응답을 받도록)
 
-    if (path) {
-      // 특정 경로만 재생성
-      revalidatePath(path);
+type RevalidateEvent = "update" | "create" | "delete";
+
+export async function POST(request: NextRequest) {
+  const secret = process.env.CCC_REVALIDATE_SECRET;
+  if (!secret) {
+    return NextResponse.json(
+      { message: "CCC_REVALIDATE_SECRET is not configured" },
+      { status: 500 }
+    );
+  }
+  if (request.headers.get("x-revalidate-secret") !== secret) {
+    return NextResponse.json({ message: "Invalid secret" }, { status: 401 });
+  }
+
+  try {
+    const body = await request.json().catch(() => ({}));
+    const path: string | undefined = body.path;
+    const event: RevalidateEvent = body.event ?? "update";
+
+    const revalidated: string[] = [];
+
+    if (path && event === "update") {
+      // 포스트 내용만 바뀐 경우 - 해당 페이지만 재생성
+      for (const pagePath of pagePaths(path)) {
+        revalidatePath(pagePath);
+        revalidated.push(pagePath);
+      }
     } else {
-      // 모든 dot 페이지 재생성
+      // 파일 추가/삭제 or 전체 요청 - 사이드바가 바뀌므로 /dot 전체 재생성
       revalidatePath("/dot", "layout");
+      revalidated.push("/dot (layout)");
+    }
+
+    // 검색 인덱스와 sitemap은 항상 갱신
+    revalidatePath("/api/search-index");
+    revalidatePath("/sitemap.xml");
+
+    // 캐시 프리워밍 - 다음 방문자가 MISS를 맞지 않도록 미리 재생성해둔다
+    if (path && event !== "delete") {
+      await prewarm(request, path);
     }
 
     return NextResponse.json({
       revalidated: true,
       now: Date.now(),
-      path: path || "all dot pages",
+      paths: revalidated,
     });
   } catch (err) {
     return NextResponse.json(
@@ -28,5 +68,25 @@ export async function POST(request: NextRequest) {
       },
       { status: 500 }
     );
+  }
+}
+
+// S3 키 -> 페이지 경로. 한글 파일명은 인코딩된 URL로 접근되므로
+// 인코딩/디코딩 두 형태 모두 무효화한다.
+function pagePaths(s3Key: string): string[] {
+  const encoded = `/dot/${s3Key.split("/").map(encodeURIComponent).join("/")}`;
+  const decoded = `/dot/${s3Key}`;
+  return encoded === decoded ? [encoded] : [encoded, decoded];
+}
+
+async function prewarm(request: NextRequest, s3Key: string) {
+  const origin = process.env.CCC_SITE_URL ?? request.nextUrl.origin;
+  const url = `${origin}/dot/${s3Key.split("/").map(encodeURIComponent).join("/")}`;
+
+  try {
+    await fetch(url, { signal: AbortSignal.timeout(10_000) });
+  } catch (err) {
+    // 프리워밍 실패는 치명적이지 않다 - 다음 방문자가 재생성을 트리거한다
+    console.error(`Prewarm failed for ${url}:`, err);
   }
 }
