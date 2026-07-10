@@ -3,12 +3,7 @@ import { marked } from "marked";
 
 import Post from "@/components/post";
 
-import {
-  getAllMarkdownDatas,
-  getMarkdownContent,
-  getMarkdownTitles,
-} from "@/services/aws-s3";
-import { addDocuments, deleteAllDocuments } from "@/services/meilisearch";
+import { getMarkdownContent, getMarkdownTitles } from "@/services/aws-s3";
 
 import Toc from "./toc";
 
@@ -20,14 +15,6 @@ export const dynamicParams = true;
 
 export async function generateStaticParams() {
   const titles = await getMarkdownTitles();
-  const documents = await getAllMarkdownDatas();
-  try {
-    await deleteAllDocuments();
-    await addDocuments(documents);
-  } catch (error) {
-    // eslint-disable-next-line no-console
-    console.error(error);
-  }
 
   return titles.map(title => ({
     md: String(title).split("/"),
@@ -129,8 +116,10 @@ const convertMarkdownToHtml = async (content: string): Promise<string> => {
 
   // Customize h2 rendering
   renderer.heading = ({ tokens, depth }) => {
+    // 내용 없는 헤딩("## ")은 tokens가 비어있어 빌드를 깨뜨린다
+    const raw = tokens[0]?.raw ?? "";
     if (depth === 2) {
-      const plainText = tokens[0].raw.replace(/<[^>]+>/g, "");
+      const plainText = raw.replace(/<[^>]+>/g, "");
       const id = plainText
         .trim()
         .split("")
@@ -142,9 +131,9 @@ const convertMarkdownToHtml = async (content: string): Promise<string> => {
         .join("")
         .replace(/\s+/g, "-");
 
-      return `<h2 id="${id}">${tokens[0].raw}</h2>`;
+      return `<h2 id="${id}">${raw}</h2>`;
     }
-    return `<h${depth}>${tokens[0].raw}</h${depth}>`;
+    return `<h${depth}>${raw}</h${depth}>`;
   };
 
   // Customize code rendering
