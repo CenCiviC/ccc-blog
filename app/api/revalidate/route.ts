@@ -11,7 +11,10 @@ import { NextRequest, NextResponse } from "next/server";
 // - update: 해당 포스트 페이지만 무효화 (사이드바 구조는 그대로이므로)
 // - create/delete: 사이드바가 모든 페이지에 있으므로 /dot 전체 무효화
 // - event 생략(S3 Lambda 트리거처럼 create/update를 모르는 호출자):
-//   기존 검색 인덱스에 path가 있으면 update, 없으면 create로 판별
+//   create로 처리한다. S3 이벤트는 신규/덮어쓰기를 구분하지 못하고,
+//   캐시된 인덱스로 판별하는 방식은 업로드 직후 인덱스가 먼저 재생성되면
+//   새 글을 update로 오판하는 레이스가 있다 (사이드바 누락 버그).
+//   전체 무효화는 stale-while-revalidate 덕에 방문자 체감 비용이 없다.
 // - 공통: 검색 인덱스와 sitemap 갱신, 무효화 직후 해당 페이지를 미리
 //   fetch해서 캐시를 데워둔다 (첫 방문자도 정적 응답을 받도록)
 
@@ -35,8 +38,7 @@ export async function POST(request: NextRequest) {
     let event: RevalidateEvent | undefined = body.event;
 
     if (path && !event) {
-      // 무효화 전의 캐시된 인덱스 기준으로 기존 글인지 판별
-      event = (await isKnownPath(request, path)) ? "update" : "create";
+      event = "create"; // 모르면 안전한 쪽 (전체 무효화)
     }
 
     const revalidated: string[] = [];
@@ -85,27 +87,6 @@ function pagePaths(s3Key: string): string[] {
   const encoded = `/dot/${s3Key.split("/").map(encodeURIComponent).join("/")}`;
   const decoded = `/dot/${s3Key}`;
   return encoded === decoded ? [encoded] : [encoded, decoded];
-}
-
-// 캐시된 검색 인덱스(무효화 전 버전)에 path가 존재하는지로 기존 글 여부 판별.
-// 판별 실패 시 create로 처리한다 (전체 재생성이 안전한 쪽이므로)
-async function isKnownPath(
-  request: NextRequest,
-  s3Key: string
-): Promise<boolean> {
-  const origin = process.env.CCC_SITE_URL ?? request.nextUrl.origin;
-  try {
-    const response = await fetch(`${origin}/api/search-index`, {
-      signal: AbortSignal.timeout(5_000),
-    });
-    const { documents } = await response.json();
-    return (
-      Array.isArray(documents) &&
-      documents.some((doc: { path: string }) => doc.path === s3Key)
-    );
-  } catch {
-    return false;
-  }
 }
 
 async function prewarm(request: NextRequest, s3Key: string) {

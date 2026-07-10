@@ -30,7 +30,7 @@ Obsidian (플러그인이 S3에 자동 동기화)
             └─ POST /api/revalidate  (x-revalidate-secret 헤더 필요)
                  ├─ update        → 해당 포스트 페이지만 재생성
                  ├─ create/delete → 사이드바 포함 /dot 전체 재생성
-                 │    (event 생략 시 기존 검색 인덱스 기준으로 자동 판별)
+                 │    (event 생략 시 create로 안전하게 처리)
                  ├─ 검색 인덱스(/api/search-index)와 sitemap 갱신
                  └─ 재생성된 페이지를 미리 fetch해서 캐시 프리워밍
 ```

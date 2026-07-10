@@ -28,7 +28,8 @@ export const handler = async event => {
     if (!key.endsWith(".md")) continue;
 
     const isDelete = record.eventName.startsWith("ObjectRemoved");
-    // create/update 구분은 webhook이 자동 판별하므로 삭제만 명시한다
+    // S3는 신규/덮어쓰기를 구분하지 못하므로 event를 생략하면
+    // webhook이 create(전체 재생성)로 안전하게 처리한다
     const body = isDelete ? { path: key, event: "delete" } : { path: key };
 
     const response = await fetch(`${siteUrl}/api/revalidate`, {
