@@ -36,13 +36,13 @@ export default async function DotPage({
   fileData.content = htmlContent;
 
   return (
-    <div className="flex bg-primary-50 w-full h-full min-h-[var(--sidebar-height)] p-[var(--padding)]">
+    <div className="flex w-full h-full min-h-[var(--sidebar-height)] p-[var(--padding)]">
       <div className="flex w-full lg:w-[80%] h-full px-4 lg:px-8">
-        <div className="flex flex-col w-full max-w-[820px] mx-auto">
+        <div className="flex flex-col w-full max-w-[68ch] mx-auto pt-3.5">
           <Post name={fileName} fileData={fileData} />
         </div>
       </div>
-      <div className="hidden lg:block sticky top-[var(--toc-top)] w-[20%] h-full p-8">
+      <div className="hidden lg:block sticky top-[var(--toc-top)] w-[20%] max-w-[240px] h-full p-8">
         <Toc markdownData={fileData} currentPath={filePath} />
       </div>
     </div>
@@ -77,19 +77,15 @@ const convertMarkdownToHtml = async (content: string): Promise<string> => {
       videoExtensions.some(ext => processedHref.toLowerCase().endsWith(ext));
 
     if (isVideo) {
-      return `<div class="flex justify-center my-3">
-        <video src="${mediaUrl}" controls${
-          title ? ` title="${title}"` : ""
-        } class="max-w-full h-auto">
+      return `<div class="md-media">
+        <video src="${mediaUrl}" controls${title ? ` title="${title}"` : ""}>
           Your browser does not support the video tag.
         </video>
       </div>`;
     }
 
-    return `<div class="flex justify-center">
-      <img src="${mediaUrl}" alt="${text}"${
-        title ? ` title="${title}"` : ""
-      } class="my-3">
+    return `<div class="md-media">
+      <img src="${mediaUrl}" alt="${text}"${title ? ` title="${title}"` : ""}>
     </div>`;
   };
 
@@ -149,19 +145,10 @@ const convertMarkdownToHtml = async (content: string): Promise<string> => {
     }
 
     return `
-    <div class="relative my-4">
-      <div class="flex justify-between items-center px-3 h-[30px] bg-[#1e1e1e] rounded-t-md">
-        <div class="flex gap-2">
-          <div class="w-[10px] h-[10px] rounded-full bg-[#ff5f56]"></div>
-          <div class="w-[10px] h-[10px] rounded-full bg-[#ffbd2e]"></div>
-          <div class="w-[10px] h-[10px] rounded-full bg-[#27c93f]"></div>
-        </div>
-        <span
-        class="text-[#6f9572] text-sm font-semibold px-2 py-1"
-        data-content="${encodeURIComponent(content.trim())}"
-        >
-         ${lang ? lang.toUpperCase() : "CODE"}
-        </span>
+    <div class="codeblock">
+      <div class="codeblock-bar">
+        <span class="codeblock-lang">${lang || "code"}</span>
+        <button type="button" class="codeblock-copy">복사</button>
       </div>
       <pre><code class="language-${
         lang || "plaintext"

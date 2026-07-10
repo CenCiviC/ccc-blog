@@ -24,17 +24,26 @@ const sortDirectories = (directories: Directory[]) => {
   });
 };
 
-const renderNode = (directory: Directory, currentPath: string) => {
+const renderNode = (
+  directory: Directory,
+  currentPath: string
+): React.ReactNode => {
   if (directory.type === "folder") {
-    const isOpened =
-      directory.name === "root" || currentPath.includes(directory.path);
+    // 루트 폴더는 행 없이 자식만 렌더링
+    if (directory.name === "root") {
+      return sortDirectories(directory.subDirectories).map(sub =>
+        renderNode(sub, currentPath)
+      );
+    }
+
+    const isOpened = currentPath.includes(directory.path);
 
     // 폴더 내부의 항목들도 정렬
     const sortedSubDirectories = sortDirectories(directory.subDirectories);
 
     return (
       <Node key={directory.name} directory={directory} isOpened={isOpened}>
-        <div className="ml-4 border-l-2 border-sub-200">
+        <div className="ml-[15px] pl-[7px] border-l border-hair">
           {sortedSubDirectories.map(directory =>
             renderNode(directory, currentPath)
           )}
@@ -57,15 +66,15 @@ export default function SideBar({ directory, currentPath }: SideBarProps) {
   const setIsOpen = useSidebarStore(state => state.setIsOpen);
 
   useEffect(() => {
+    // 데스크톱 폭으로 넘어가면 모바일 드로어 상태를 정리한다
+    // (표시 자체는 CSS의 lg:flex가 담당)
     const handleResize = () => {
-      const shouldBeOpen = window.innerWidth >= 1024;
-      setIsOpen(shouldBeOpen);
-      if (shouldBeOpen) {
+      if (window.innerWidth >= 1024) {
+        setIsOpen(false);
         document.body.style.overflow = "";
       }
     };
 
-    handleResize(); // 초기 세팅
     window.addEventListener("resize", handleResize);
 
     return () => {
@@ -75,10 +84,14 @@ export default function SideBar({ directory, currentPath }: SideBarProps) {
 
   return (
     <aside
-      className={`flex flex-col sticky top-[var(--topbar-height)] shrink-0 w-[300px] h-[var(--sidebar-height)] overflow-y-scroll scroll-hide overscroll-none bg-sub-100 border-r-2 border-sub-300 p-6 gap-1 ${
-        isOpen ? "flex" : "hidden"
+      aria-label="문서 탐색"
+      className={`flex-col fixed lg:sticky top-[var(--topbar-height)] z-40 lg:z-auto shrink-0 w-[280px] h-[var(--sidebar-height)] overflow-y-scroll overscroll-none bg-paper border-r border-hair py-8 pl-6 pr-4 ${
+        isOpen ? "flex" : "hidden lg:flex"
       }`}
     >
+      <p className="text-[11px] font-semibold tracking-[0.18em] uppercase text-ink2 mb-3.5 ml-1.5">
+        Dots
+      </p>
       {renderNode(directory, currentPath)}
       <div className="w-full min-h-[100px]" />
     </aside>

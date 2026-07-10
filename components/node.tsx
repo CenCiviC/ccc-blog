@@ -7,49 +7,41 @@ import { useState } from "react";
 
 import type { Directory } from "@/lib/types";
 
-import { FileSvg, FolderSvg } from "./icons";
+import { ChevronRightSvg, FileSvg, FolderSvg } from "./icons";
 
 interface NodeProps {
   directory: Directory;
   isOpened: boolean;
-  prefix?: number;
   children?: React.ReactNode;
 }
+
+const rowClass =
+  "flex items-center gap-2 w-full h-8 px-2.5 my-0.5 rounded-lg text-sm whitespace-nowrap transition-colors";
 
 export default function Node({
   directory,
   isOpened: initialIsOpened,
-  prefix = 0,
   children,
 }: NodeProps) {
   const [isOpened, setIsOpened] = useState(initialIsOpened);
 
-  const leftPadding = prefix * 10 + 8;
-  const containrClass = cn(
-    "flex items-center gap-2.5 p-2 rounded-[4px] w-full h-10",
-    { "bg-primary-900": isOpened && directory.type === "file" },
-    { "hover:bg-primary-500": !(isOpened && directory.type === "file") }
-  );
-
-  const textClass = cn("line-clamp-1 text-sm", {
-    "text-primary-50": isOpened && directory.type === "file",
-  });
-
-  const handleToggle = () => {
-    if (directory.type === "folder") {
-      setIsOpened(!isOpened);
-    }
-  };
-
   if (directory.type === "file") {
+    const isActive = initialIsOpened;
     return (
       <Link
-        style={{ paddingLeft: leftPadding }}
         href={`/dot/${directory.path}`}
-        className={containrClass}
+        aria-current={isActive ? "page" : undefined}
+        className={cn(
+          rowClass,
+          isActive
+            ? "bg-ink text-paper font-semibold"
+            : "text-ink2 hover:text-ink hover:bg-ink/[0.07]"
+        )}
       >
-        <FileSvg isOpend={isOpened} />
-        <span className={textClass}>{directory.name}</span>
+        <FileSvg
+          className={isActive ? "text-paper/75" : "text-ink/60"}
+        />
+        <span className="truncate leading-normal">{directory.name}</span>
       </Link>
     );
   }
@@ -58,12 +50,22 @@ export default function Node({
     <div>
       <button
         type="button"
-        style={{ paddingLeft: leftPadding }}
-        className={containrClass}
-        onClick={handleToggle}
+        aria-expanded={isOpened}
+        className={cn(
+          rowClass,
+          "font-semibold text-ink hover:bg-ink/[0.07] cursor-pointer"
+        )}
+        onClick={() => setIsOpened(!isOpened)}
       >
-        <FolderSvg isOpend={isOpened} />
-        <span className={textClass}>{directory.name}</span>
+        <ChevronRightSvg
+          className={cn("text-ink2 transition-transform duration-200", {
+            "rotate-90": isOpened,
+          })}
+        />
+        <span className="text-ink/60">
+          <FolderSvg />
+        </span>
+        <span className="truncate leading-normal">{directory.name}</span>
       </button>
       <div
         className={cn("overflow-hidden transition-all ease-in-out", {

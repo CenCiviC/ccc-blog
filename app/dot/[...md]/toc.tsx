@@ -42,8 +42,13 @@ export default function Toc({ markdownData, currentPath }: TocProps) {
     return () => observer.disconnect();
   }, []);
 
+  if (h2Headings.length === 0) return null;
+
   return (
-    <div className="w-full h-max ">
+    <nav className="w-full h-max" aria-label="목차">
+      <p className="text-[11px] font-semibold tracking-[0.18em] uppercase text-ink2 mb-3.5">
+        목차
+      </p>
       {h2Headings.map(heading => (
         <Anchor
           key={heading.href}
@@ -52,7 +57,7 @@ export default function Toc({ markdownData, currentPath }: TocProps) {
           href={`/dot/${currentPath}#${heading.href}`}
         />
       ))}
-    </div>
+    </nav>
   );
 }
 

@@ -2,30 +2,39 @@
 
 :root {
   box-sizing: border-box;
+  color-scheme: light dark;
 
-  /* color theme */
-  --codeblock-color: rgb(255, 253, 245);
-  --text-color: #56575c;
-  --h1-color: #d24b4b;
-  --h2-color: #e4a30c;
-  --h3-color: #5eb34d;
-  --h4-color: #18a8dc;
-  --h5-color: #8078ba;
-  --p-color: #222222;
-  --link-color: #f0cb7a;
-  --internal-color: #76b6ca;
+  /* editorial ink-on-paper palette */
+  --paper: #fbfafd;
+  --ink: #26242c;
+  --ink2: #6b6a74;
+  --hair: color-mix(in srgb, #c7c4d5 40%, transparent);
+  --hair-solid: #e6e3ee;
+  --accent: #9480ba;
+  --accent-soft: color-mix(in srgb, #9480ba 14%, transparent);
 
-  --primary-50: #f7f6f9;
-  --primary-100: #f0edf5;
-  --primary-200: #ede7f0;
-  --primary-300: #e2deed;
-  --primary-400: #d5d0e4;
-  --primary-500: #c9c1df;
-  --primary-900: #9480ba;
-  --sub-100: #edeef5;
-  --sub-200: #d2cddd;
-  --sub-300: #c7c4d5;
-  --sub-500: #aba5c1;
+  /* rainbow dot palette (brand accents: graph, strong, links) */
+  --dot1: #d24b4b;
+  --dot2: #e4a30c;
+  --dot3: #5eb34d;
+  --dot4: #18a8dc;
+  --dot5: #8078ba;
+
+  /* muted heading colors tuned for ink-on-paper contrast */
+  --hc2: #b8830a;
+  --hc3: #4a9439;
+  --hc4: #1489b4;
+
+  /* code panel */
+  --panel: #f3f1f7;
+  --panel-ink: #45414e;
+  --code-kw: #7a71ad;
+  --code-str: #62a156;
+  --code-num: #b28a2e;
+  --code-fn: #3e93b8;
+  --code-cm: #9a97a3;
+
+  --graph-edge: rgba(148, 128, 186, 0.16);
 
   /* size */
   --topbar-height: 60px;
@@ -34,29 +43,56 @@
   --toc-top: calc(var(--topbar-height) + var(--padding));
 }
 
-@theme {
-  --color-codeblock: var(--codeblock-color);
-  --color-text: var(--text-color);
-  --color-h1: var(--h1-color);
-  --color-h2: var(--h2-color);
-  --color-h3: var(--h3-color);
-  --color-h4: var(--h4-color);
-  --color-h5: var(--h5-color);
-  --color-p: var(--p-color);
-  --color-link: var(--link-color);
-  --color-internal: var(--internal-color);
+@media (prefers-color-scheme: dark) {
+  :root {
+    --paper: #1a191f;
+    --ink: #e8e6ee;
+    --ink2: #98959f;
+    --hair: color-mix(in srgb, #34323e 80%, transparent);
+    --hair-solid: #2c2a35;
+    --accent: #a893cc;
+    --accent-soft: color-mix(in srgb, #a893cc 18%, transparent);
 
-  --color-primary-50: var(--primary-50);
-  --color-primary-100: var(--primary-100);
-  --color-primary-200: var(--primary-200);
-  --color-primary-300: var(--primary-300);
-  --color-primary-400: var(--primary-400);
-  --color-primary-500: var(--primary-500);
-  --color-primary-900: var(--primary-900);
-  --color-sub-100: var(--sub-100);
-  --color-sub-200: var(--sub-200);
-  --color-sub-300: var(--sub-300);
-  --color-sub-500: var(--sub-500);
+    --dot1: #e06a6a;
+    --dot2: #eab53c;
+    --dot3: #74c463;
+    --dot4: #3fb9e6;
+    --dot5: #9a92d6;
+
+    --hc2: #d9a93f;
+    --hc3: #7cbd6a;
+    --hc4: #4fb5da;
+
+    --panel: #232129;
+    --panel-ink: #c9c6d2;
+    --code-kw: #a89fd6;
+    --code-str: #8cc57f;
+    --code-num: #d3ab52;
+    --code-fn: #6db4d6;
+    --code-cm: #6f6c79;
+
+    --graph-edge: rgba(168, 147, 204, 0.1);
+  }
+}
+
+@theme {
+  --color-paper: var(--paper);
+  --color-ink: var(--ink);
+  --color-ink2: var(--ink2);
+  --color-hair: var(--hair-solid);
+  --color-accent: var(--accent);
+  --color-accent-soft: var(--accent-soft);
+  --color-panel: var(--panel);
+  --color-panel-ink: var(--panel-ink);
+
+  --color-dot1: var(--dot1);
+  --color-dot2: var(--dot2);
+  --color-dot3: var(--dot3);
+  --color-dot4: var(--dot4);
+  --color-dot5: var(--dot5);
+  --color-hc2: var(--hc2);
+  --color-hc3: var(--hc3);
+  --color-hc4: var(--hc4);
 }
 
 * {
@@ -68,51 +104,30 @@
   display: none;
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-  }
+body {
+  background: var(--paper);
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+  /* 한국어 조판: 단어 중간 줄바꿈 방지 */
+  word-break: keep-all;
+  overflow-wrap: break-word;
 }
 
-/* base style */
-@layer base {
-  h1 {
-    @apply text-h1 font-[750] text-[25.6px];
-  }
-  h2 {
-    @apply text-h2 font-[700] text-[24px];
-  }
-  h3 {
-    @apply text-h3 font-[650] text-[22.4px];
-  }
-  h4 {
-    @apply text-h4 font-[600] text-[20.8px];
-  }
-  h5 {
-    @apply text-h5 font-[550] text-[19.2px];
-  }
-  p {
-    @apply text-p font-[500] text-[16px];
-  }
-  span {
-    @apply text-text;
-  }
+::selection {
+  background: var(--accent-soft);
 }
 
-/*
+:is(a, button):focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 3px;
+}
 
-Atom One Light by Daniel Gamage
-Original One Light Syntax theme from https://github.com/atom/one-light-syntax
-
-base:    #fafafa
-mono-1:  #383a42
-mono-2:  #686b77
-mono-3:  #a0a1a7
-hue-1:   #0184bb
-hue-2:   #4078f2
-hue-3:   #a626a4
-hue-4:   #50a14f
-hue-5:   #e45649
-hue-5-2: #c91243
-hue-6:   #986801
-hue-6-2: #c18401
-*/
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation: none !important;
+  }
+}

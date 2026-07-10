@@ -8,18 +8,20 @@ interface AnchorProps {
 }
 
 export default function Anchor({ text, href, isActive }: AnchorProps) {
-  const spanClass = cn(
-    "line-clamp-1",
-    { "text-primary-900": isActive },
-    { "text-text": !isActive }
-  );
-
   return (
     <Link
       href={href}
-      className="flex p-2 rounded-[4px] hover:bg-primary-200 bg-transparent"
+      className={cn(
+        "relative block py-[5px] pl-3.5 text-[13px] leading-normal transition-colors",
+        isActive
+          ? "text-ink font-semibold"
+          : "text-ink2 hover:text-ink"
+      )}
     >
-      <span className={spanClass}>{text}</span>
+      {isActive && (
+        <span className="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-3.5 rounded-[1px] bg-ink" />
+      )}
+      <span className="line-clamp-1">{text}</span>
     </Link>
   );
 }
