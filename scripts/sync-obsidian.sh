@@ -61,6 +61,18 @@ revalidate() {
     -H "x-revalidate-secret: $SECRET" \
     -d "{\"path\":\"$escaped_key\",\"event\":\"$event\"}"
   echo
+
+  # 무효화가 반영된 뒤 페이지를 한 번 요청해 재생성 비용을 여기서 치른다.
+  # (서버 내부 프리워밍은 같은 요청 사이클이라 무효화 전 캐시를 받을 수 있음)
+  if [ "$event" != "delete" ]; then
+    local encoded_path
+    encoded_path="$(python3 -c "
+import urllib.parse, sys
+print('/'.join(urllib.parse.quote(seg) for seg in sys.argv[1].split('/')))
+" "$key")"
+    curl -s -o /dev/null -w "warm   [%{http_code}] ${key} (%{time_total}s)\n" \
+      "$SITE_URL/dot/$encoded_path"
+  fi
 }
 
 # 3. sync 출력에서 변경된 .md 파일을 파싱해 revalidate 호출
