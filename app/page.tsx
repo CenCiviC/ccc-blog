@@ -1,6 +1,5 @@
 import Image from "next/image";
 
-import DotGraph from "@/components/dot-graph";
 import TopBar from "@/components/topbar";
 
 const strongClass =
@@ -14,35 +13,32 @@ export default function Home() {
     <>
       <TopBar hasMenuBtn={false} />
 
-      {/* 히어로 — 환영 문구 + Obsidian 그래프 모티프 */}
-      <section className="relative max-w-[1080px] w-full mx-auto px-6 md:px-8 pt-14 md:pt-24 pb-12 md:pb-20">
-        <DotGraph className="absolute inset-0 w-full h-full pointer-events-none" />
-        <div className="relative z-[1] max-w-[720px]">
-          <h1 className="text-ink text-balance">
-            <span className="block text-[clamp(34px,4.3vw,46px)] font-extralight tracking-[0.005em] leading-[1.3]">
-              임경빈의 블로그에 온 걸 환영합니다
-            </span>
-            <span className="block mt-4 max-w-[44ch] text-[clamp(19px,2.2vw,23px)] font-[560] leading-[1.6]">
-              이 블로그는 스티브 잡스의 연설, &ldquo;connecting the
-              dots&rdquo;에서 영감을 받아 만들어졌습니다.
-            </span>
-          </h1>
-          <p className="mt-6 max-w-[54ch] text-[16.5px] leading-[1.8] text-ink2">
-            스티브 잡스는 현재를 하나의 점으로 말하며 &ldquo;누구도 미래를
-            예측할 수는 없지만 현재 각자가 자신의 자리에서 하고 있는 노력이
-            미래에 어떤 식으로든 연결이 될 거라는 믿음을 가져야만 한다&rdquo;라고
-            표현했습니다.
-          </p>
-          <p className="mt-4 max-w-[54ch] text-[16.5px] leading-[1.8] text-ink2">
-            점은 크기가 없지만 점들이 모인 선과 면은 한없이 커질 수 있는 것처럼
-            서로 관련 없는 조각들이지만, 언젠가 이 점들이 선이 되어 저만의
-            그림을 완성하리라는 믿음으로 만들어가고 있습니다.
-          </p>
-        </div>
+      {/* 오프닝 — 환영 문구 */}
+      <section className="w-full max-w-[68ch] mx-auto px-6 md:px-8 pt-16 md:pt-24 pb-14 md:pb-20 border-b border-hair">
+        <h1 className="text-ink text-balance">
+          <span className="block text-[clamp(32px,4vw,42px)] font-extralight tracking-[0.005em] leading-[1.3]">
+            임경빈의 블로그에 온 걸 환영합니다
+          </span>
+          <span className="block mt-4 text-[clamp(18px,2.1vw,21px)] font-[560] leading-[1.6]">
+            이 블로그는 스티브 잡스의 연설, &ldquo;connecting the
+            dots&rdquo;에서 영감을 받아 만들어졌습니다.
+          </span>
+        </h1>
+        <p className="mt-7 text-[16.5px] leading-[1.8] text-ink2">
+          스티브 잡스는 현재를 하나의 점으로 말하며 &ldquo;누구도 미래를 예측할
+          수는 없지만 현재 각자가 자신의 자리에서 하고 있는 노력이 미래에 어떤
+          식으로든 연결이 될 거라는 믿음을 가져야만 한다&rdquo;라고
+          표현했습니다.
+        </p>
+        <p className="mt-4 text-[16.5px] leading-[1.8] text-ink2">
+          점은 크기가 없지만 점들이 모인 선과 면은 한없이 커질 수 있는 것처럼
+          서로 관련 없는 조각들이지만, 언젠가 이 점들이 선이 되어 저만의 그림을
+          완성하리라는 믿음으로 만들어가고 있습니다.
+        </p>
       </section>
 
       {/* 본문 — 에세이 롱리드 */}
-      <main className="w-full max-w-[68ch] mx-auto px-6 md:px-8 pb-32 text-[17px] leading-[1.8]">
+      <main className="w-full max-w-[68ch] mx-auto px-6 md:px-8 pt-14 pb-32 text-[17px] leading-[1.8]">
         {/* Obsidian 섹션 */}
         <section className="space-y-5">
           <h2 className={sectionTitleClass}>Obsidian으로 생각을 쌓다</h2>
