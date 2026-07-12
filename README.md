@@ -7,7 +7,7 @@ A personal blog built with Next.js that transforms Obsidian markdown notes into 
 ## Features
 
 - **Markdown-based**: Write posts in Obsidian and sync them to AWS S3
-- **Instant publish**: `scripts/sync-obsidian.sh` syncs the vault to S3 and revalidates only the changed pages (on-demand ISR + cache prewarming)
+- **Instant publish**: S3 upload events trigger a Lambda that revalidates only the changed pages (on-demand ISR + cache prewarming) — save in Obsidian, live in ~15s
 - **Search**: Self-hosted full-text search — a static index (`/api/search-index`) is generated at build/revalidate time and searched in the browser (no search server)
 - **Code highlighting**: Syntax highlighting for code blocks using highlight.js
 - **Table of contents**: Auto-generated TOC for better navigation
