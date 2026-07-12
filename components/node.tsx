@@ -38,9 +38,7 @@ export default function Node({
             : "text-ink2 hover:text-ink hover:bg-ink/[0.07]"
         )}
       >
-        <FileSvg
-          className={isActive ? "text-paper/75" : "text-ink/60"}
-        />
+        <FileSvg className={isActive ? "text-paper/75" : "text-ink/60"} />
         <span className="truncate leading-normal">{directory.name}</span>
       </Link>
     );

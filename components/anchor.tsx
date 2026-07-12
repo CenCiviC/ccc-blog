@@ -13,9 +13,7 @@ export default function Anchor({ text, href, isActive }: AnchorProps) {
       href={href}
       className={cn(
         "relative block py-[5px] pl-3.5 text-[13px] leading-normal transition-colors",
-        isActive
-          ? "text-ink font-semibold"
-          : "text-ink2 hover:text-ink"
+        isActive ? "text-ink font-semibold" : "text-ink2 hover:text-ink"
       )}
     >
       {isActive && (

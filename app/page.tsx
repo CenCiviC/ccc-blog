@@ -44,9 +44,9 @@ export default function Home() {
           <h2 className={sectionTitleClass}>Obsidian으로 생각을 쌓다</h2>
           <p>
             이러한 방향성을 가장 잘 시각화할 수 있는 도구가 바로{" "}
-            <strong className={strongClass}>Obsidian</strong>이라는 앱이었습니다.
-            마크다운으로 작성하여 생각의 흐름을 노드와 선으로 연결해주는 이 앱은
-            브레인스토밍 이상의 의미를 담고 있습니다.
+            <strong className={strongClass}>Obsidian</strong>이라는
+            앱이었습니다. 마크다운으로 작성하여 생각의 흐름을 노드와 선으로
+            연결해주는 이 앱은 브레인스토밍 이상의 의미를 담고 있습니다.
           </p>
           <p>
             저는 매일같이 Obsidian에 글을 쓰고 있습니다. 아직은 많지 않은
