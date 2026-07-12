@@ -1,4 +1,6 @@
+import cn from "classnames";
 import Image from "next/image";
+import { Fragment } from "react";
 
 import TopBar from "@/components/topbar";
 
@@ -7,6 +9,50 @@ const strongClass =
 
 const sectionTitleClass =
   "text-[25px] font-[750] tracking-[-0.02em] leading-[1.35] text-hc2 text-balance";
+
+// 발행 파이프라인 다이어그램 — 디자인 토큰만 사용해 라이트/다크 모두 대응
+function PublishFlow() {
+  const steps = [
+    { name: "Obsidian", sub: "작성 · 저장" },
+    { name: "S3", sub: "자동 동기화" },
+    { name: "이벤트 감지", sub: "바뀐 문서만" },
+    { name: "Web", sub: "즉시 반영", accent: true },
+  ];
+
+  return (
+    <div className="my-2 rounded-[10px] border border-hair bg-panel px-5 py-6">
+      <ol className="flex flex-col items-stretch gap-2.5 md:flex-row md:items-center">
+        {steps.map((step, index) => (
+          <Fragment key={step.name}>
+            <li
+              className={cn(
+                "flex-1 rounded-lg border px-3 py-2.5 text-center",
+                step.accent
+                  ? "border-accent/40 bg-accent-soft"
+                  : "border-hair bg-paper"
+              )}
+            >
+              <div className="text-sm font-semibold text-ink">{step.name}</div>
+              <div className="mt-0.5 text-[11px] text-ink2">{step.sub}</div>
+            </li>
+            {index < steps.length - 1 && (
+              <span
+                aria-hidden
+                className="self-center text-ink2 rotate-90 md:rotate-0"
+              >
+                →
+              </span>
+            )}
+          </Fragment>
+        ))}
+      </ol>
+      <p className="mt-4 text-center text-xs text-ink2">
+        저장에서 발행까지{" "}
+        <span className="font-semibold text-accent">약 15초</span>
+      </p>
+    </div>
+  );
+}
 
 export default function Home() {
   return (
@@ -54,10 +100,10 @@ export default function Home() {
           </p>
           <div className="flex justify-center py-2">
             <Image
-              src="https://dengtukgi5sf7.cloudfront.net/attachment/스크린샷%202025-04-21%20오전%2012.46.57.png"
+              src="https://dengtukgi5sf7.cloudfront.net/attachment/Pasted%20image%2020260713011926.png"
               alt="Obsidian 그래프 뷰"
               width={440}
-              height={220}
+              height={428}
               className="rounded-[10px] border border-hair"
             />
           </div>
@@ -88,44 +134,20 @@ export default function Home() {
             Markdown → S3 → Web: 최소한의 블로깅 시스템
           </h2>
           <p>
-            <strong className={strongClass}>
-              Obsidian에서 작성한 Markdown 파일
-            </strong>
-            은 로컬에서 <strong className={strongClass}>S3 버킷</strong>에
-            자동으로 동기화되고, 다시 내가 원하는 일부 폴더만 선별해{" "}
-            <strong className={strongClass}>웹사이트로 렌더링</strong>됩니다.
+            Obsidian에서 글을 저장하면 로컬 플러그인이 곧바로{" "}
+            <strong className={strongClass}>S3 버킷</strong>에 동기화합니다.
+            S3에 올라온 변경은{" "}
+            <strong className={strongClass}>이벤트로 감지</strong>
+            되어, 내가 선별한 폴더 중 바뀐 문서만 다시 렌더링됩니다.
           </p>
-          <div className="flex justify-center py-2">
-            <Image
-              src="https://dengtukgi5sf7.cloudfront.net/attachment/struc.png"
-              alt="블로그 구조도"
-              width={440}
-              height={220}
-              className="rounded-[10px] border border-hair"
-            />
-          </div>
+          <PublishFlow />
           <p>
-            복잡한 CMS나 에디터 없이, 기록에서 발행까지의 시간을 최소화하는
-            구조를 만들었습니다. 덕분에{" "}
-            <strong className={strongClass}>
-              기록 자체에 집중할 수 있는 환경
-            </strong>
-            을 갖추게 되었습니다.
-          </p>
-        </section>
-
-        <hr className="w-12 mx-auto my-14 border-0 border-t border-hair" />
-
-        {/* 마무리 섹션 */}
-        <section className="space-y-5">
-          <h2 className={sectionTitleClass}>앞으로의 방향</h2>
-          <p>
-            아직은 저만을 위한 공간이지만, 언젠가는 이 점들이 선이 되어 다른
-            누군가의 생각과도 연결되길 바랍니다.
-          </p>
-          <p className="text-ink2">
-            앞으로는 댓글 기능을 추가하거나, 글을 더 구조화하여 조금 더 열려
-            있는 형태로 만들어갈 예정입니다.
+            전체를 다시 빌드하지 않고 바뀐 페이지만 갱신하기 때문에, 복잡한
+            CMS나 배포 과정 없이도 저장한 글이{" "}
+            <strong className={strongClass}>약 15초 만에 웹에 반영</strong>
+            됩니다. 검색 인덱스와 목차도 이때 함께 갱신됩니다. 덕분에 기록에서
+            발행까지의 시간을 최소화하고, 기록 자체에 집중할 수 있는 환경을
+            갖추게 되었습니다.
           </p>
         </section>
       </main>
