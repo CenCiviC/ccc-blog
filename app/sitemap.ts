@@ -1,27 +1,25 @@
 import type { MetadataRoute } from "next";
 
-import { getMarkdownTitles } from "@/services/aws-s3";
+import { SITE_URL } from "@/lib/config";
+import { encodePathSegments } from "@/lib/encoding-utils";
+import { listMarkdownFiles } from "@/services/aws-s3";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  // 비동기로 데이터 가져오기
-  const titles = await getMarkdownTitles();
+  const files = await listMarkdownFiles();
 
-  // 가져온 데이터 기반으로 사이트맵 생성
-  const postUrls = titles.map(title => ({
-    url: `https://kyungbin.im/dot/${title}`,
-    lastModified: new Date(), // 각 포스트의 수정 날짜
-    changeFrequency: "hourly" as const,
+  const postUrls = files.map(file => ({
+    url: `${SITE_URL}/dot/${encodePathSegments(file.key)}`,
+    lastModified: file.lastModified, // S3의 실제 수정 시각
+    changeFrequency: "weekly" as const,
     priority: 0.8,
   }));
 
-  // 기본 URL + 포스트 URL 반환
   return [
     {
-      url: "https://kyungbin.im",
-      lastModified: new Date(),
+      url: SITE_URL,
       changeFrequency: "yearly",
       priority: 1,
     },
-    ...postUrls, // 포스트 URL 추가
+    ...postUrls,
   ];
 }

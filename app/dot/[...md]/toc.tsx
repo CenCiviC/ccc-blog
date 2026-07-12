@@ -3,17 +3,15 @@
 import { useEffect, useState } from "react";
 
 import Anchor from "@/components/anchor";
-import type { MDData } from "@/lib/types";
+import type { Heading } from "@/lib/markdown";
 
 interface TocProps {
-  markdownData: MDData;
+  headings: Heading[];
   currentPath: string;
 }
 
-export default function Toc({ markdownData, currentPath }: TocProps) {
+export default function Toc({ headings, currentPath }: TocProps) {
   const [activeId, setActiveId] = useState<string>("");
-
-  const h2Headings = extractHeadings(markdownData.content);
 
   useEffect(() => {
     const callback = (entries: IntersectionObserverEntry[]) => {
@@ -40,43 +38,23 @@ export default function Toc({ markdownData, currentPath }: TocProps) {
     document.querySelectorAll("h2").forEach(h2 => observer.observe(h2));
 
     return () => observer.disconnect();
-  }, []);
+  }, [currentPath]);
 
-  if (h2Headings.length === 0) return null;
+  if (headings.length === 0) return null;
 
   return (
     <nav className="w-full h-max" aria-label="목차">
       <p className="text-[11px] font-semibold tracking-[0.18em] uppercase text-ink2 mb-3.5">
         목차
       </p>
-      {h2Headings.map(heading => (
+      {headings.map(heading => (
         <Anchor
-          key={heading.href}
-          isActive={heading.href === activeId}
+          key={heading.id}
+          isActive={heading.id === activeId}
           text={heading.text}
-          href={`/dot/${currentPath}#${heading.href}`}
+          href={`/dot/${currentPath}#${heading.id}`}
         />
       ))}
     </nav>
   );
-}
-
-// toc 생성을 위한 h2 추출함수
-function extractHeadings(content: string) {
-  const h2Headings: { text: string; href: string }[] = [];
-  const regex = /<h2[^>]*id="([^"]*)"[^>]*>(.*?)<\/h2>/g;
-  let match;
-
-  const getPlainText = (html: string) => {
-    return html.replace(/<[^>]+>/g, "");
-  };
-
-  while ((match = regex.exec(content)) !== null) {
-    h2Headings.push({
-      href: match[1],
-      text: getPlainText(match[2]),
-    });
-  }
-
-  return h2Headings;
 }

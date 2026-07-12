@@ -1,5 +1,5 @@
 export type MDData = {
-  id: string; // uuid v4
+  id: string; // 파일명의 base64url 인코딩
   path: string; // 파일 경로 ex. programming/aws/file.md
   title: string; // key에서 확장자와 경로 제거
   content: string;

@@ -11,14 +11,12 @@ export const dynamic = "force-static";
 export async function GET() {
   const markdownDatas = await getAllMarkdownDatas();
 
-  const documents: SearchDocument[] = markdownDatas
-    .filter(data => data.path)
-    .map(data => ({
-      id: data.id,
-      path: data.path,
-      title: data.title,
-      content: stripMarkdown(data.content),
-    }));
+  const documents: SearchDocument[] = markdownDatas.map(data => ({
+    id: data.id,
+    path: data.path,
+    title: data.title,
+    content: stripMarkdown(data.content),
+  }));
 
   return NextResponse.json({ documents });
 }

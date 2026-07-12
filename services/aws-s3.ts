@@ -2,125 +2,96 @@ import {
   S3Client,
   ListObjectsV2Command,
   GetObjectCommand,
+  NoSuchKey,
 } from "@aws-sdk/client-s3";
+import { cache } from "react";
 import { Readable } from "stream";
-import { MDData } from "@/lib/types";
-import { streamToString } from "@/lib/stream-utils";
-import { encodeToUUIDv4 } from "@/lib/encoding-utils";
 
-// ListObjectsV2Command api 예시
-// {
-//   Key: 'programming/web/sticky 오류 시.md',
-//   LastModified: 2024-12-19T08:57:17.000Z,
-//   ETag: '"4c4b0af69e9aa130d17c985f81d504bc"',
-//   ChecksumAlgorithm: [Array],
-//   Size: 91,
-//   StorageClass: 'STANDARD'
-// },
+import { encodeBase64Url } from "@/lib/encoding-utils";
+import { requireEnv } from "@/lib/env";
+import { streamToString } from "@/lib/stream-utils";
+import { MDData } from "@/lib/types";
 
 const s3Client = new S3Client({
   region: "ap-northeast-2", // 버킷의 aws 리전
   credentials: {
-    accessKeyId: process.env.CCC_AWS_ACCESS_KEY ?? "", // 사용자 생성 시 발급받은 액세스 키
-    secretAccessKey: process.env.CCC_AWS_SECRET_KEY ?? "", // 사용자 생성 시 발급받은 비밀 액세스 키
+    accessKeyId: requireEnv("CCC_AWS_ACCESS_KEY"),
+    secretAccessKey: requireEnv("CCC_AWS_SECRET_KEY"),
   },
 });
 
-const DEFAULT_BUCKET_NAME = "ccc-blog";
-const DEFAULT_FOLDER_PATHS = ["programming/", "side project/", "kyungbin/"];
+const BUCKET_NAME = "ccc-blog";
+// 발행 대상 폴더 - 이 밖의 S3 객체는 사이트에 노출되지 않는다
+const FOLDER_PREFIXES = ["programming/", "side project/", "kyungbin/"];
 
-// S3에서 폴더 내 파일 이름 가져오기 - 폴더 경로가 이름
-export async function getMarkdownTitles(
-  bucketName: string = DEFAULT_BUCKET_NAME,
-  folderPaths: string | string[] = DEFAULT_FOLDER_PATHS
-): Promise<Array<string>> {
-  try {
-    const fileIndexes: Array<string> = [];
-    const paths = Array.isArray(folderPaths) ? folderPaths : [folderPaths];
+export type MarkdownFile = {
+  key: string; // ex. programming/aws/file.md
+  lastModified: Date | undefined;
+};
 
-    for (const folderPath of paths) {
-      const command = new ListObjectsV2Command({
-        Bucket: bucketName,
-        Prefix: folderPath, // 폴더 경로
-      });
+// 발행 대상 폴더의 .md 목록을 가져온다.
+// - cache(): 한 번의 렌더 패스(layout + page + metadata)에서 S3를 한 번만 조회
+// - 실패 시 throw: 자격증명 문제 등을 "글 0개"로 조용히 삼키지 않고 빌드를 깨뜨린다
+export const listMarkdownFiles = cache(async (): Promise<MarkdownFile[]> => {
+  const files: MarkdownFile[] = [];
 
-      const response = await s3Client.send(command);
+  for (const prefix of FOLDER_PREFIXES) {
+    let continuationToken: string | undefined;
 
-      if (!response.Contents) {
-        continue;
-      }
+    // ListObjectsV2는 최대 1,000개씩 반환하므로 페이지네이션 처리
+    do {
+      const response = await s3Client.send(
+        new ListObjectsV2Command({
+          Bucket: BUCKET_NAME,
+          Prefix: prefix,
+          ContinuationToken: continuationToken,
+        })
+      );
 
-      // .md 파일만 필터링하고 등록된 날짜순 (LastModified)으로 정렬
-      const sortedFilesByDate = response.Contents.filter(
-        object => object.Key && object.Key.endsWith(".md")
-      ).sort((a, b) => {
-        if (a.LastModified && b.LastModified) {
-          return a.LastModified.getTime() - b.LastModified.getTime(); // 등록된 날짜순 정렬
-        }
-        return 0;
-      });
-
-      // .md 파일의 내용을 가져와 dict에 추가
-      for (const object of sortedFilesByDate) {
-        if (object.Key) {
-          fileIndexes.push(object.Key);
+      for (const object of response.Contents ?? []) {
+        if (object.Key?.endsWith(".md")) {
+          files.push({ key: object.Key, lastModified: object.LastModified });
         }
       }
+
+      continuationToken = response.NextContinuationToken;
+    } while (continuationToken);
+  }
+
+  return files;
+});
+
+// 특정 파일 내용을 가져온다. 파일이 없으면 null (호출부에서 notFound 처리),
+// 그 외 오류는 throw.
+export const getMarkdownContent = cache(
+  async (path: string): Promise<MDData | null> => {
+    try {
+      const response = await s3Client.send(
+        new GetObjectCommand({ Bucket: BUCKET_NAME, Key: path })
+      );
+
+      const content = await streamToString(response.Body as Readable);
+      const title = path.split("/").pop()!.replace(/\.md$/, "");
+
+      return {
+        id: encodeBase64Url(title),
+        path,
+        title,
+        content,
+        lastModifiedDate: response.LastModified,
+      };
+    } catch (error) {
+      if (error instanceof NoSuchKey) return null;
+      throw error;
     }
-
-    return fileIndexes;
-  } catch (error) {
-    console.error("Error fetching files from S3:", error);
-    return [];
   }
-}
+);
 
-// 특정 파일 내용을 가져와 출력
-export async function getMarkdownContent(
-  path: string, // 파일 경로
-  bucketName: string = DEFAULT_BUCKET_NAME
-): Promise<MDData> {
-  const command = new GetObjectCommand({
-    Bucket: bucketName,
-    Key: path,
-  });
-
-  try {
-    const response = await s3Client.send(command);
-    const stream = response.Body as Readable;
-    const content = await streamToString(stream);
-
-    const pathParts = path.split("/");
-    const fileName = pathParts[pathParts.length - 1].replace(/\.md$/, "");
-
-    const endcodedFileName = encodeToUUIDv4(fileName);
-
-    return {
-      id: endcodedFileName,
-      path: path,
-      title: fileName,
-      content: content,
-      lastModifiedDate: response.LastModified,
-    };
-  } catch (error) {
-    console.error(`Error fetching content of ${path}:`, error);
-    return {
-      id: "",
-      path: "",
-      title: "",
-      content: "",
-      lastModifiedDate: new Date(),
-    };
-  }
-}
-
-// 모든 마크다운 파일 데이터 가져오기
-export async function getAllMarkdownDatas(): Promise<Array<MDData>> {
-  const mdTitles = await getMarkdownTitles();
-  const mdDatas = await Promise.all(
-    mdTitles.map(async title => {
-      return await getMarkdownContent(title);
-    })
+// 모든 마크다운 파일 데이터 가져오기 (검색 인덱스, llms.txt용)
+export async function getAllMarkdownDatas(): Promise<MDData[]> {
+  const files = await listMarkdownFiles();
+  const datas = await Promise.all(
+    files.map(file => getMarkdownContent(file.key))
   );
-  return mdDatas;
+  return datas.filter((data): data is MDData => data !== null);
 }

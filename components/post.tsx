@@ -1,26 +1,23 @@
-// app/components/Post.tsx
-
-import type { MDData } from "@/lib/types";
 import "@/style/post.css";
 
 import CodeCopyListener from "./code-copy-listener";
 
 interface PostProps {
-  name: string;
-  fileData: MDData;
+  title: string;
+  html: string; // 서버에서 변환된 마크다운 HTML
+  lastModifiedDate?: Date;
 }
 
-const Post = ({ name, fileData }: PostProps) => {
-  const processedContent = fileData.content;
+const Post = ({ title, html, lastModifiedDate }: PostProps) => {
   return (
     <article>
       <h1 className="text-[34px] font-extrabold tracking-[-0.028em] leading-[1.28] text-ink text-balance mb-2.5">
-        {name}
+        {title}
       </h1>
-      {fileData.lastModifiedDate && (
+      {lastModifiedDate && (
         <p className="text-[13.5px] text-ink2 mb-[46px] pb-[22px] border-b border-hair">
           마지막 수정일 ·{" "}
-          {fileData.lastModifiedDate.toLocaleDateString("ko-KR", {
+          {lastModifiedDate.toLocaleDateString("ko-KR", {
             year: "numeric",
             month: "2-digit",
             day: "2-digit",
@@ -31,7 +28,7 @@ const Post = ({ name, fileData }: PostProps) => {
       <div
         className="markdown-body"
         dangerouslySetInnerHTML={{
-          __html: processedContent,
+          __html: html,
         }}
       />
       <CodeCopyListener />

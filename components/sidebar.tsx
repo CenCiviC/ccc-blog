@@ -12,18 +12,7 @@ interface SideBarProps {
   currentPath: string;
 }
 
-const sortDirectories = (directories: Directory[]) => {
-  return [...directories].sort((a, b) => {
-    // 폴더를 먼저 보여주기 위해 type 비교
-    if (a.type === "folder" && b.type === "file") return -1;
-    if (a.type === "file" && b.type === "folder") return 1;
-    // 같은 타입일 경우 이름으로 정렬
-    return a.name.localeCompare(b.name, ["ko", "en"], {
-      sensitivity: "variant",
-    });
-  });
-};
-
+// 트리는 서버(buildFileTree)에서 이미 정렬된 상태로 내려온다
 const renderNode = (
   directory: Directory,
   currentPath: string
@@ -31,20 +20,16 @@ const renderNode = (
   if (directory.type === "folder") {
     // 루트 폴더는 행 없이 자식만 렌더링
     if (directory.name === "root") {
-      return sortDirectories(directory.subDirectories).map(sub =>
-        renderNode(sub, currentPath)
-      );
+      return directory.subDirectories.map(sub => renderNode(sub, currentPath));
     }
 
-    const isOpened = currentPath.includes(directory.path);
-
-    // 폴더 내부의 항목들도 정렬
-    const sortedSubDirectories = sortDirectories(directory.subDirectories);
+    // 폴더 path는 상위 경로를 포함한 전체 경로라 prefix 비교로 열림 판정
+    const isOpened = currentPath.startsWith(directory.path);
 
     return (
       <Node key={directory.name} directory={directory} isOpened={isOpened}>
         <div className="ml-[15px] pl-[7px] border-l border-hair">
-          {sortedSubDirectories.map(directory =>
+          {directory.subDirectories.map(directory =>
             renderNode(directory, currentPath)
           )}
         </div>
