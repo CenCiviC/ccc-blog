@@ -1,8 +1,13 @@
 import { notFound } from "next/navigation";
 
+import type { Metadata } from "next";
+
 import Post from "@/components/post";
 
+import { AUTHOR_NAME, SITE_NAME, SITE_URL } from "@/lib/config";
+import { encodePathSegments } from "@/lib/encoding-utils";
 import { renderMarkdown } from "@/lib/markdown";
+import { stripMarkdown } from "@/lib/search";
 import { getMarkdownContent, listMarkdownFiles } from "@/services/aws-s3";
 
 import Toc from "./toc";
@@ -21,6 +26,47 @@ export async function generateStaticParams() {
   }));
 }
 
+// 검색 결과/미리보기용 요약 - 본문 평문의 앞부분
+function buildDescription(markdown: string): string {
+  const plain = stripMarkdown(markdown);
+  return plain.length > 160 ? `${plain.slice(0, 157)}…` : plain;
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<PageParams>;
+}): Promise<Metadata> {
+  const slug = (await params).md;
+  const filePath = decodeURIComponent(slug.join("/"));
+  const fileData = await getMarkdownContent(filePath); // cache()로 페이지 렌더와 공유
+
+  if (!fileData) return {};
+
+  const description = buildDescription(fileData.content);
+  const canonicalPath = `/dot/${encodePathSegments(filePath)}`;
+
+  return {
+    title: fileData.title,
+    description,
+    alternates: { canonical: canonicalPath },
+    openGraph: {
+      type: "article",
+      title: fileData.title,
+      description,
+      url: canonicalPath,
+      modifiedTime: fileData.lastModifiedDate?.toISOString(),
+      locale: "ko_KR",
+      siteName: SITE_NAME,
+    },
+    twitter: {
+      card: "summary",
+      title: fileData.title,
+      description,
+    },
+  };
+}
+
 export default async function DotPage({
   params,
 }: {
@@ -34,8 +80,23 @@ export default async function DotPage({
 
   const { html, headings } = await renderMarkdown(fileData.content);
 
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    headline: fileData.title,
+    description: buildDescription(fileData.content),
+    inLanguage: "ko",
+    dateModified: fileData.lastModifiedDate?.toISOString(),
+    mainEntityOfPage: `${SITE_URL}/dot/${encodePathSegments(filePath)}`,
+    author: { "@type": "Person", name: AUTHOR_NAME, url: SITE_URL },
+  };
+
   return (
-    <div className="flex w-full h-full min-h-[var(--sidebar-height)] p-[var(--padding)]">
+    <main className="flex w-full h-full min-h-[var(--sidebar-height)] p-[var(--padding)]">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <div className="flex w-full lg:w-[80%] h-full px-4 lg:px-8">
         <div className="flex flex-col w-full max-w-[68ch] mx-auto pt-3.5">
           <Post
@@ -48,6 +109,6 @@ export default async function DotPage({
       <div className="hidden lg:block sticky top-[var(--toc-top)] w-[20%] max-w-[240px] h-full p-8">
         <Toc headings={headings} currentPath={filePath} />
       </div>
-    </div>
+    </main>
   );
 }

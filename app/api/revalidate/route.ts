@@ -1,6 +1,8 @@
 import { revalidatePath } from "next/cache";
 import { NextRequest, NextResponse } from "next/server";
 
+import { encodePathSegments } from "@/lib/encoding-utils";
+
 // S3 업로드 훅에서 호출하는 on-demand 재생성 엔드포인트.
 //
 // body: {
@@ -15,7 +17,7 @@ import { NextRequest, NextResponse } from "next/server";
 //   캐시된 인덱스로 판별하는 방식은 업로드 직후 인덱스가 먼저 재생성되면
 //   새 글을 update로 오판하는 레이스가 있다 (사이드바 누락 버그).
 //   전체 무효화는 stale-while-revalidate 덕에 방문자 체감 비용이 없다.
-// - 공통: 검색 인덱스와 sitemap 갱신, 무효화 직후 해당 페이지를 미리
+// - 공통: 검색 인덱스·sitemap·llms.txt 갱신, 무효화 직후 해당 페이지를 미리
 //   fetch해서 캐시를 데워둔다 (첫 방문자도 정적 응답을 받도록)
 
 type RevalidateEvent = "update" | "create" | "delete";
@@ -45,7 +47,7 @@ export async function POST(request: NextRequest) {
 
     if (path && event === "update") {
       // 포스트 내용만 바뀐 경우 - 해당 페이지만 재생성
-      for (const pagePath of pagePaths(path)) {
+      for (const pagePath of pagePaths("/dot", path)) {
         revalidatePath(pagePath);
         revalidated.push(pagePath);
       }
@@ -55,9 +57,18 @@ export async function POST(request: NextRequest) {
       revalidated.push("/dot (layout)");
     }
 
-    // 검색 인덱스와 sitemap은 항상 갱신
+    // 마크다운 원문(/raw)은 /dot 레이아웃에 포함되지 않으므로 개별 무효화
+    if (path) {
+      for (const rawPath of pagePaths("/raw", path)) {
+        revalidatePath(rawPath);
+        revalidated.push(rawPath);
+      }
+    }
+
+    // 검색 인덱스, sitemap, llms.txt는 항상 갱신
     revalidatePath("/api/search-index");
     revalidatePath("/sitemap.xml");
+    revalidatePath("/llms.txt");
 
     // 캐시 프리워밍 - 다음 방문자가 MISS를 맞지 않도록 미리 재생성해둔다
     if (path && event !== "delete") {
@@ -83,15 +94,15 @@ export async function POST(request: NextRequest) {
 
 // S3 키 -> 페이지 경로. 한글 파일명은 인코딩된 URL로 접근되므로
 // 인코딩/디코딩 두 형태 모두 무효화한다.
-function pagePaths(s3Key: string): string[] {
-  const encoded = `/dot/${s3Key.split("/").map(encodeURIComponent).join("/")}`;
-  const decoded = `/dot/${s3Key}`;
+function pagePaths(prefix: "/dot" | "/raw", s3Key: string): string[] {
+  const encoded = `${prefix}/${encodePathSegments(s3Key)}`;
+  const decoded = `${prefix}/${s3Key}`;
   return encoded === decoded ? [encoded] : [encoded, decoded];
 }
 
 async function prewarm(request: NextRequest, s3Key: string) {
   const origin = process.env.CCC_SITE_URL ?? request.nextUrl.origin;
-  const url = `${origin}/dot/${s3Key.split("/").map(encodeURIComponent).join("/")}`;
+  const url = `${origin}/dot/${encodePathSegments(s3Key)}`;
 
   try {
     await fetch(url, { signal: AbortSignal.timeout(10_000) });
