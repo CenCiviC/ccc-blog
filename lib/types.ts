@@ -3,7 +3,7 @@ export type MDData = {
   path: string; // 파일 경로 ex. programming/aws/file.md
   title: string; // key에서 확장자와 경로 제거
   content: string;
-  lastModifiedDate: Date | undefined;
+  lastModifiedDate: Date | undefined; // 프론트매터에 적힌 날짜, 없으면 S3 LastModified
 };
 
 export type Directory = File | Folder;

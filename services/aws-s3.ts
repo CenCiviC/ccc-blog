@@ -9,6 +9,7 @@ import { Readable } from "stream";
 
 import { encodeBase64Url } from "@/lib/encoding-utils";
 import { requireEnv } from "@/lib/env";
+import { parseFrontmatter, readFrontmatterDate } from "@/lib/frontmatter";
 import { streamToString } from "@/lib/stream-utils";
 import { MDData } from "@/lib/types";
 
@@ -70,15 +71,19 @@ export const getMarkdownContent = cache(
         new GetObjectCommand({ Bucket: BUCKET_NAME, Key: path })
       );
 
-      const content = await streamToString(response.Body as Readable);
+      const raw = await streamToString(response.Body as Readable);
       const title = path.split("/").pop()!.replace(/\.md$/, "");
+
+      // Obsidian properties는 본문에서 걷어내고, 거기 적힌 수정일을 우선 사용한다.
+      // 직접 적지 않았으면 S3의 업로드 시각으로 폴백.
+      const { data, content } = parseFrontmatter(raw);
 
       return {
         id: encodeBase64Url(title),
         path,
         title,
         content,
-        lastModifiedDate: response.LastModified,
+        lastModifiedDate: readFrontmatterDate(data) ?? response.LastModified,
       };
     } catch (error) {
       if (error instanceof NoSuchKey) return null;
