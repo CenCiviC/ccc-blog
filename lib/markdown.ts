@@ -75,11 +75,19 @@ export async function renderMarkdown(
         if (!href) return text;
         const titleAttr = title ? ` title="${escapeAttr(title)}"` : "";
 
-        // anchor/외부 링크는 그대로, 상대 경로는 내부 문서 링크로 변환
-        if (href.startsWith("#") || href.startsWith("http")) {
+        // 앵커는 같은 페이지 스크롤이므로 새 탭 대상이 아니다
+        if (href.startsWith("#")) {
           return `<a href="${href}"${titleAttr}>${text}</a>`;
         }
-        return `<a href="/dot/${href}"${titleAttr}>${text}</a>`;
+
+        // 외부 링크는 그대로, 상대 경로는 내부 문서 링크로 변환.
+        // 본문 링크는 읽던 글을 잃지 않도록 둘 다 새 탭에서 연다.
+        // (사이드바/목차/검색 등 UI 내비게이션은 기존대로 같은 탭)
+        const isExternal = href.startsWith("http");
+        const url = isExternal ? href : `/dot/${href}`;
+        const rel = isExternal ? "noopener noreferrer" : "noopener";
+
+        return `<a href="${url}"${titleAttr} target="_blank" rel="${rel}">${text}</a>`;
       },
 
       heading({ tokens, depth }) {
