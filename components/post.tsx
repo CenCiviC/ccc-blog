@@ -32,7 +32,7 @@ const Post = ({ title, html, lastModifiedDate }: PostProps) => {
         }}
       />
       <CodeCopyListener />
-      <footer className="w-full h-[400px] min-h-[400px]" />
+      <footer className="no-print w-full h-[400px] min-h-[400px]" />
     </article>
   );
 };

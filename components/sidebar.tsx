@@ -101,7 +101,7 @@ export default function SideBar({ directory, currentPath }: SideBarProps) {
     <aside
       ref={asideRef}
       aria-label="문서 탐색"
-      className={`flex-col fixed lg:sticky top-[var(--topbar-height)] z-40 lg:z-auto shrink-0 w-[280px] h-[var(--sidebar-height)] overflow-y-scroll overscroll-none bg-paper border-r border-hair py-8 pl-6 pr-4 ${
+      className={`no-print flex-col fixed lg:sticky top-[var(--topbar-height)] z-40 lg:z-auto shrink-0 w-[280px] h-[var(--sidebar-height)] overflow-y-scroll overscroll-none bg-paper border-r border-hair py-8 pl-6 pr-4 ${
         isOpen ? "flex" : "hidden lg:flex"
       }`}
     >

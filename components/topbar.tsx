@@ -25,7 +25,7 @@ export default function TopBar({
 
   return (
     <nav
-      className={`flex sticky z-50 top-0 left-0 items-center justify-between shrink-0 w-full h-[var(--topbar-height)] px-7 bg-paper transition-shadow duration-200 ${
+      className={`no-print flex sticky z-50 top-0 left-0 items-center justify-between shrink-0 w-full h-[var(--topbar-height)] px-7 bg-paper transition-shadow duration-200 ${
         scrolled ? "shadow-[0_1px_0_var(--hair-solid)]" : ""
       }`}
     >

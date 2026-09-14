@@ -131,3 +131,103 @@ body {
     animation: none !important;
   }
 }
+
+/* ---------- print (Cmd+P / PDF 저장) ----------
+ * 화면 전용 크롬(탑바·사이드바·목차·복사 버튼)을 걷어내고
+ * 본문만 종이 폭에 맞춰 흘린다.
+ * 다크 모드에서 뽑아도 잉크-온-페이퍼로 고정. */
+@page {
+  margin: 16mm 14mm;
+}
+
+@media print {
+  :root {
+    --paper: #ffffff;
+    --ink: #1a1a1f;
+    --ink2: #55535c;
+    --hair: #dcd9e4;
+    --hair-solid: #dcd9e4;
+    --accent: #6f5f96;
+    --accent-soft: #ece7f5;
+
+    --hc2: #8a6207;
+    --hc3: #35682a;
+    --hc4: #0f6d90;
+
+    --panel: #f4f3f7;
+    --panel-ink: #2b2932;
+    --code-kw: #5b5289;
+    --code-str: #3f7a35;
+    --code-num: #8a6207;
+    --code-fn: #256a88;
+    --code-cm: #78757f;
+
+    --topbar-height: 0px;
+    --padding: 0px;
+    --sidebar-height: auto;
+  }
+
+  html,
+  body {
+    background: #fff !important;
+    height: auto !important;
+    overflow: visible !important;
+  }
+
+  body {
+    /* 코드 패널·마크 배경까지 그대로 인쇄 */
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  /* 화면 전용 UI */
+  .no-print,
+  .markdown-body .codeblock-copy {
+    display: none !important;
+  }
+
+  /* flex 레이아웃을 종이 흐름으로 되돌린다 */
+  body > div,
+  body > div > div,
+  main,
+  main > div,
+  main > div > div,
+  article {
+    display: block !important;
+    position: static !important;
+    width: 100% !important;
+    max-width: none !important;
+    height: auto !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: visible !important;
+  }
+
+  /* 페이지 나눔 */
+  .markdown-body :is(h1, h2, h3, h4, h5, h6) {
+    break-after: avoid;
+    break-inside: avoid;
+  }
+
+  .markdown-body :is(p, li, blockquote) {
+    orphans: 3;
+    widows: 3;
+  }
+
+  .markdown-body :is(img, video, table, tr, .md-media) {
+    break-inside: avoid;
+  }
+
+  /* 화면에서 가로 스크롤이던 것들은 종이에선 다 펼친다 */
+  .markdown-body table {
+    display: table !important;
+    width: 100% !important;
+  }
+
+  .markdown-body .codeblock pre {
+    overflow: visible !important;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+}

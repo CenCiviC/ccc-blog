@@ -106,7 +106,7 @@ export default async function DotPage({
           />
         </div>
       </div>
-      <div className="hidden lg:block sticky top-[var(--toc-top)] w-[20%] max-w-[240px] h-full p-8">
+      <div className="no-print hidden lg:block sticky top-[var(--toc-top)] w-[20%] max-w-[240px] h-full p-8">
         <Toc headings={headings} currentPath={filePath} />
       </div>
     </main>

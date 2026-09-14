@@ -94,7 +94,11 @@ export default function SearchModal({
   }, [searchResults, selectedIndex, router, setIsOpen]);
 
   return (
-    <div className="fixed inset-0 z-[100]" role="dialog" aria-modal="true">
+    <div
+      className="no-print fixed inset-0 z-[100]"
+      role="dialog"
+      aria-modal="true"
+    >
       <div
         className="absolute inset-0 bg-paper/55 backdrop-blur-[7px]"
         onClick={() => setIsOpen(false)}
