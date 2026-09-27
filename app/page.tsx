@@ -2,7 +2,10 @@ import cn from "classnames";
 import Image from "next/image";
 import { Fragment } from "react";
 
+import SideBar from "@/components/sidebar";
 import TopBar from "@/components/topbar";
+import { buildFileTree } from "@/lib/file-tree";
+import { listMarkdownFiles } from "@/services/aws-s3";
 
 const strongClass =
   "font-bold underline decoration-dot1/45 decoration-2 underline-offset-4";
@@ -54,10 +57,14 @@ function PublishFlow() {
   );
 }
 
-export default function Home() {
+export default async function Home() {
+  const files = await listMarkdownFiles();
+  const fileTree = buildFileTree(files.map(file => file.key));
+
   return (
     <>
-      <TopBar hasMenuBtn={false} />
+      <TopBar />
+      <SideBar directory={fileTree} currentPath="" mobileOnly />
 
       {/* 오프닝 — 환영 문구 */}
       <section className="w-full max-w-[68ch] mx-auto px-6 md:px-8 pt-16 md:pt-24 pb-14 md:pb-20 border-b border-hair">

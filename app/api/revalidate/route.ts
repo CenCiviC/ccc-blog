@@ -55,6 +55,9 @@ export async function POST(request: NextRequest) {
       // 파일 추가/삭제 or 전체 요청 - 사이드바가 바뀌므로 /dot 전체 재생성
       revalidatePath("/dot", "layout");
       revalidated.push("/dot (layout)");
+      // 홈도 모바일 드로어로 같은 파일 트리를 들고 있다
+      revalidatePath("/");
+      revalidated.push("/");
     }
 
     // 마크다운 원문(/raw)은 /dot 레이아웃에 포함되지 않으므로 개별 무효화

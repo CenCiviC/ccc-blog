@@ -5,14 +5,11 @@ import { useEffect, useState } from "react";
 
 import { useSidebarStore } from "@/lib/store/sidebarStore";
 
-import { GithubSvg, LinkedinSvg, MenuSvg } from "./icons";
+import { CloseSvg, GithubSvg, LinkedinSvg, MenuSvg } from "./icons";
 import SearchBar from "./searchbar";
 
-export default function TopBar({
-  hasMenuBtn = true,
-}: {
-  hasMenuBtn?: boolean;
-}) {
+export default function TopBar() {
+  const isOpen = useSidebarStore(state => state.isOpen);
   const toggleSidebar = useSidebarStore(state => state.toggleSidebar);
   const [scrolled, setScrolled] = useState(false);
 
@@ -25,21 +22,20 @@ export default function TopBar({
 
   return (
     <nav
-      className={`no-print flex sticky z-50 top-0 left-0 items-center justify-between shrink-0 w-full h-[var(--topbar-height)] px-7 bg-paper transition-shadow duration-200 ${
+      className={`no-print flex sticky z-50 top-0 left-0 items-center justify-between shrink-0 w-full h-[var(--topbar-height)] px-4 sm:px-7 bg-paper transition-shadow duration-200 ${
         scrolled ? "shadow-[0_1px_0_var(--hair-solid)]" : ""
       }`}
     >
       <div className="flex items-center gap-1">
-        {hasMenuBtn && (
-          <button
-            type="button"
-            aria-label="메뉴 열기"
-            onClick={toggleSidebar}
-            className="lg:hidden text-ink2 hover:text-ink p-1.5 mr-1 cursor-pointer"
-          >
-            <MenuSvg />
-          </button>
-        )}
+        <button
+          type="button"
+          aria-label={isOpen ? "메뉴 닫기" : "메뉴 열기"}
+          aria-expanded={isOpen}
+          onClick={toggleSidebar}
+          className="lg:hidden text-ink2 hover:text-ink p-1.5 -ml-1.5 mr-1 cursor-pointer"
+        >
+          {isOpen ? <CloseSvg /> : <MenuSvg />}
+        </button>
 
         <Link
           href={"/"}
@@ -65,10 +61,10 @@ export default function TopBar({
         </Link>
       </div>
 
-      <div className="flex items-center gap-6">
+      <div className="flex items-center gap-4 sm:gap-6">
         <Link
           href={"/dot/kyungbin/About%20me.md"}
-          className="hidden sm:block text-sm font-medium text-ink2 hover:text-ink transition-colors"
+          className="text-sm font-medium text-ink2 hover:text-ink transition-colors"
         >
           About me
         </Link>
