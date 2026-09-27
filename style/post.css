@@ -122,6 +122,98 @@
   margin-bottom: 0;
 }
 
+/* obsidian callout (rendered by the custom marked renderer) */
+.markdown-body .callout {
+  --callout: var(--dot4);
+  margin: 22px 0;
+  padding: 14px 18px;
+  border: 0;
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--callout) 9%, transparent);
+}
+
+.markdown-body .callout[data-callout="tip"],
+.markdown-body .callout[data-callout="success"] {
+  --callout: var(--dot3);
+}
+
+.markdown-body .callout[data-callout="warning"] {
+  --callout: var(--dot2);
+  /* 노랑 글자는 밝은 배경에서 대비가 약해 제목만 h2 톤을 쓴다 */
+  --callout-ink: var(--hc2);
+}
+
+.markdown-body .callout[data-callout="danger"],
+.markdown-body .callout[data-callout="bug"] {
+  --callout: var(--dot1);
+}
+
+.markdown-body .callout[data-callout="question"],
+.markdown-body .callout[data-callout="abstract"] {
+  --callout: var(--dot5);
+}
+
+.markdown-body .callout[data-callout="quote"] {
+  --callout: var(--ink2);
+}
+
+.markdown-body .callout-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.5;
+  color: var(--callout-ink, var(--callout));
+}
+
+.markdown-body .callout-icon {
+  flex: none;
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.markdown-body .callout-body {
+  margin-top: 4px;
+}
+
+.markdown-body .callout-body > :last-child {
+  margin-bottom: 0;
+}
+
+.markdown-body .callout-body p {
+  margin-bottom: 6px;
+}
+
+.markdown-body details.callout summary {
+  cursor: pointer;
+  list-style: none;
+}
+
+.markdown-body details.callout summary::-webkit-details-marker {
+  display: none;
+}
+
+.markdown-body details.callout summary::after {
+  content: "";
+  width: 6px;
+  height: 6px;
+  margin-left: 2px;
+  border: solid currentColor;
+  border-width: 0 1.5px 1.5px 0;
+  transform: rotate(-45deg);
+  transition: transform 0.15s;
+}
+
+.markdown-body details.callout[open] summary::after {
+  transform: rotate(45deg);
+}
+
 .markdown-body hr {
   width: 48px;
   height: 0;

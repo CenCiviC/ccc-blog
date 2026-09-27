@@ -215,7 +215,7 @@ body {
     widows: 3;
   }
 
-  .markdown-body :is(img, video, table, tr, .md-media) {
+  .markdown-body :is(img, video, table, tr, .md-media, .callout) {
     break-inside: avoid;
   }
 
