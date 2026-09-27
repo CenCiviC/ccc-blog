@@ -10,12 +10,21 @@ import type { SearchDocument, SearchResult, Segment } from "@/lib/search";
 
 // 인덱스는 세션 동안 한 번만 받는다 (모달을 다시 열어도 재요청 없음)
 let indexPromise: Promise<SearchDocument[]> | null = null;
+// 이미 받은 인덱스 - 모달을 다시 열 때 로딩 표시 없이 바로 쓴다
+let loadedDocuments: SearchDocument[] | null = null;
 
-function loadSearchIndex(): Promise<SearchDocument[]> {
+// 검색바가 유휴 시간/hover에 미리 호출해, 모달을 열기 전에 받아둔다
+export function loadSearchIndex(): Promise<SearchDocument[]> {
   if (!indexPromise) {
     indexPromise = fetch("/api/search-index")
-      .then(response => response.json())
-      .then(data => data.documents as SearchDocument[])
+      .then(response => {
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        return response.json();
+      })
+      .then(data => {
+        loadedDocuments = data.documents as SearchDocument[];
+        return loadedDocuments;
+      })
       .catch(error => {
         indexPromise = null; // 실패 시 다음에 다시 시도
         throw error;
@@ -32,8 +41,13 @@ export default function SearchModal({
   const router = useRouter();
   const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
   const [selectedIndex, setSelectedIndex] = useState(0);
-  const documentsRef = useRef<SearchDocument[]>([]);
+  const documentsRef = useRef<SearchDocument[]>(loadedDocuments ?? []);
   const queryRef = useRef("");
+  // 인덱스 도착 전엔 "결과 없음" 대신 로딩을 보여준다 (첫 방문 시 오해 방지)
+  const [indexStatus, setIndexStatus] = useState<"loading" | "ready" | "error">(
+    loadedDocuments ? "ready" : "loading"
+  );
+  const [query, setQuery] = useState("");
 
   useEffect(() => {
     let cancelled = false;
@@ -41,6 +55,7 @@ export default function SearchModal({
       .then(documents => {
         if (cancelled) return;
         documentsRef.current = documents;
+        setIndexStatus("ready");
         // 인덱스 로드 전에 입력된 검색어 반영
         if (queryRef.current) {
           setSearchResults(searchDocuments(documents, queryRef.current));
@@ -48,6 +63,7 @@ export default function SearchModal({
         }
       })
       .catch(error => {
+        if (!cancelled) setIndexStatus("error");
         // eslint-disable-next-line no-console
         console.error("Failed to load search index:", error);
       });
@@ -59,6 +75,7 @@ export default function SearchModal({
   function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
     const searchQuery = event.target.value;
     queryRef.current = searchQuery;
+    setQuery(searchQuery);
     setSearchResults(searchDocuments(documentsRef.current, searchQuery));
     setSelectedIndex(0);
   }
@@ -138,7 +155,15 @@ export default function SearchModal({
           </ol>
         ) : (
           <div className="flex items-center justify-center h-[100px]">
-            <span className="text-sm text-ink2">검색 결과가 없습니다</span>
+            <span className="text-sm text-ink2">
+              {indexStatus === "loading"
+                ? "검색 데이터를 불러오는 중…"
+                : indexStatus === "error"
+                  ? "검색 데이터를 불러오지 못했습니다. 창을 닫고 다시 열어주세요."
+                  : query.trim()
+                    ? "검색 결과가 없습니다"
+                    : "검색어를 입력하세요"}
+            </span>
           </div>
         )}
 
